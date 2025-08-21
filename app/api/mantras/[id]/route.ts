@@ -27,6 +27,27 @@ export async function GET(
       return NextResponse.json({ error: 'Mantra not found' }, { status: 404 })
     }
 
+    // Get translations for this mantra
+    const { data: translations, error: translationsError } = await supabase
+      .from('mantra_translations')
+      .select(`
+        *,
+        languages(id, code, name, native_name, direction, sort_order)
+      `)
+      .eq('mantra_id', mantraId)
+
+    if (translationsError) {
+      console.error('Translations fetch error:', translationsError)
+    }
+
+    // Sort translations by language sort_order
+    const sortedTranslations = translations ?
+      translations.sort((a, b) => (a.languages?.sort_order || 0) - (b.languages?.sort_order || 0)) :
+      []
+
+    // Add translations to mantra object
+    mantra.translations = sortedTranslations
+
     // Get related mantras (same deity or category)
     const { data: relatedMantras } = await supabase
       .from('mantras')
