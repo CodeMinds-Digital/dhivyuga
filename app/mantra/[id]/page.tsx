@@ -111,10 +111,16 @@ export default function MantraDetailPage() {
   }
 
   const handleShare = () => {
-    if (navigator.share) {
+    if (navigator.share && mantra) {
+      // Get meaning from the first available translation, or use a default description
+      const firstTranslation = mantra.translations?.[0]
+      const description = firstTranslation?.meaning
+        ? firstTranslation.meaning.replace(/<[^>]*>/g, '') // Remove HTML tags
+        : `${mantra.title} - Sacred mantra for spiritual practice`
+
       navigator.share({
-        title: mantra?.title,
-        text: mantra?.meaning,
+        title: mantra.title,
+        text: description,
         url: window.location.href
       })
     }

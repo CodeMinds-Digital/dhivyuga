@@ -74,7 +74,6 @@ export default function LanguageManager({
   }, [languages, activeLanguage])
 
   const fetchLanguages = async () => {
-    console.log('🔄 Fetching languages and translations for mantra:', mantraId)
     try {
       const { data, error } = await supabase
         .from('languages')
@@ -83,29 +82,24 @@ export default function LanguageManager({
         .order('sort_order')
 
       if (error) {
-        console.error('❌ Languages fetch error:', error)
         throw error
       }
-      console.log('✅ Languages fetched:', data?.length || 0)
       setLanguages(data || [])
 
       // Fetch existing translations for this mantra
       if (mantraId) {
-        console.log('🔄 Fetching existing translations for mantra:', mantraId)
         const { data: translationsData, error: translationsError } = await supabase
           .from('mantra_translations')
           .select('*')
           .eq('mantra_id', mantraId)
 
         if (translationsError) {
-          console.error('❌ Translations fetch error:', translationsError)
           throw translationsError
         }
-        console.log('✅ Existing translations fetched:', translationsData?.length || 0, translationsData)
         setTranslations(translationsData || [])
       }
     } catch (error) {
-      console.error('❌ Error fetching languages:', error)
+      console.error('Error fetching languages:', error)
     } finally {
       setLoading(false)
     }
@@ -147,11 +141,9 @@ export default function LanguageManager({
   }
 
   const saveTranslation = async (languageId: string) => {
-    console.log('🔄 Saving translation for language:', languageId)
     setSaving(true)
     try {
       const translation = getTranslationForLanguage(languageId)
-      console.log('📝 Translation data to save:', translation)
 
       if (!translation.text.trim()) {
         // Delete translation if text is empty
@@ -177,20 +169,16 @@ export default function LanguageManager({
 
       if (translation.id) {
         // Update existing
-        console.log('🔄 Updating existing translation:', translation.id)
         const { error } = await supabase
           .from('mantra_translations')
           .update(translationData)
           .eq('id', translation.id)
 
         if (error) {
-          console.error('❌ Update error:', error)
           throw error
         }
-        console.log('✅ Translation updated successfully')
       } else {
         // Create new
-        console.log('➕ Creating new translation with data:', translationData)
         const { data, error } = await supabase
           .from('mantra_translations')
           .insert(translationData)
@@ -198,11 +186,8 @@ export default function LanguageManager({
           .single()
 
         if (error) {
-          console.error('❌ Insert error:', error)
           throw error
         }
-
-        console.log('✅ Translation created successfully:', data)
 
         // Update local state with new ID
         setTranslations(prev => prev.map(t =>
@@ -210,11 +195,11 @@ export default function LanguageManager({
         ))
       }
     } catch (error) {
-      console.error('❌ Error saving translation:', error)
-      alert(`Error saving translation: ${error.message || error}. Please try again.`)
+      console.error('Error saving translation:', error)
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      alert(`Error saving translation: ${errorMessage}. Please try again.`)
     } finally {
       setSaving(false)
-      console.log('🏁 Save operation completed')
     }
   }
 
