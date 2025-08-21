@@ -35,10 +35,20 @@ function SearchPageContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
   const category = searchParams.get('category') || ''
+  const deity = searchParams.get('deity') || ''
+
+  // Update filters when URL parameters change
+  useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      category: category,
+      deity: deity
+    }))
+  }, [category, deity])
 
   useEffect(() => {
     fetchMantras()
-  }, [query, category, filters])
+  }, [query, category, deity, filters])
 
   const fetchMantras = async () => {
     setLoading(true)
@@ -48,7 +58,7 @@ function SearchPageContent() {
       const params = new URLSearchParams()
       if (query) params.append('q', query)
       if (category) params.append('category', category)
-      if (filters.deity) params.append('deity', filters.deity)
+      if (deity || filters.deity) params.append('deity', deity || filters.deity)
       if (filters.timeOfDay) params.append('time', filters.timeOfDay)
       if (filters.kalam) params.append('kalam', filters.kalam)
 
@@ -70,44 +80,75 @@ function SearchPageContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col content-bg">
+    <div className="min-h-screen flex flex-col surface">
       <Header />
 
       <main className="flex-1">
-        {/* Search Header */}
-        <section className="py-16 px-4 bg-gradient-to-br from-purple-600 via-blue-600 to-purple-700">
-          <div className="max-w-6xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="mb-6"
-            >
-              <span className="inline-block text-5xl mb-4">🔍</span>
-            </motion.div>
+        {/* Modern Search Header */}
+        <section className="hero-section py-20 md:py-24 px-4 relative overflow-hidden">
+          {/* Subtle geometric pattern */}
+          <div className="absolute inset-0 opacity-[0.02]">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, hsl(var(--primary)) 2px, transparent 2px),
+                               radial-gradient(circle at 75% 75%, hsl(var(--accent)) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px, 40px 40px'
+            }}></div>
+          </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-4xl md:text-5xl font-playfair font-bold bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent mb-8"
-            >
-              {query ? `Search Results for "${query}"` : 'Search Mantras'}
-            </motion.h1>
-
+          <div className="max-w-6xl mx-auto text-center relative z-10">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{
+                duration: 0.8,
+                ease: [0.05, 0.7, 0.1, 1]
+              }}
+              className="space-y-8"
             >
-              <SearchBar defaultValue={query} />
+              <div className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="mb-6"
+                >
+                  <span className="inline-block text-6xl mb-4">🔍</span>
+                </motion.div>
+
+                <div className="space-y-4">
+                  <h1 className="text-display bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 bg-clip-text text-transparent">
+                    {query ? `Search Results for "${query}"` :
+                      category ? `${category} Mantras` :
+                        deity ? `${deity.charAt(0).toUpperCase() + deity.slice(1)} Mantras` :
+                          'Search Mantras'}
+                  </h1>
+                  <p className="text-body-large text-zinc-600 max-w-2xl mx-auto">
+                    {query ? `Showing results for "${query}"` :
+                      category ? `Explore mantras in the ${category} category` :
+                        deity ? `Discover sacred mantras dedicated to ${deity.charAt(0).toUpperCase() + deity.slice(1)}` :
+                          'Discover sacred mantras and spiritual practices'}
+                  </p>
+                </div>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.4,
+                  duration: 0.6,
+                  ease: [0.05, 0.7, 0.1, 1]
+                }}
+              >
+                <SearchBar defaultValue={query} />
+              </motion.div>
             </motion.div>
           </div>
         </section>
 
-        {/* Search Results */}
-        <section className="py-12 px-4">
-          <div className="max-w-7xl mx-auto">
+        {/* Modern Search Results */}
+        <section className="py-24 px-4 section-bg">
+          <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Sidebar Filters */}
               <div className="lg:col-span-1">
@@ -126,31 +167,46 @@ function SearchPageContent() {
                   />
                 ) : (
                   <>
-                    <div className="flex justify-between items-center mb-6">
-                      <p className="text-slate-600">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6 }}
+                      className="flex justify-between items-center mb-8"
+                    >
+                      <h2 className="text-title-large text-zinc-900">
                         {mantras.length} mantras found
                         {query && ` for "${query}"`}
-                      </p>
-                    </div>
+                      </h2>
+                    </motion.div>
 
                     {mantras.length === 0 ? (
-                      <div className="text-center py-12">
-                        <div className="text-6xl mb-4">🔍</div>
-                        <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center py-16"
+                      >
+                        <div className="text-6xl mb-6">🔍</div>
+                        <h3 className="text-title-large text-zinc-900 mb-3">
                           No mantras found
                         </h3>
-                        <p className="text-slate-600 mb-4">
+                        <p className="text-body text-zinc-600 mb-6">
                           Try adjusting your search terms or filters
                         </p>
-                      </div>
+                      </motion.div>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {mantras.map((mantra, index) => (
                           <motion.div
                             key={mantra.id}
                             initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{
+                              delay: index * 0.1,
+                              duration: 0.6,
+                              ease: [0.05, 0.7, 0.1, 1]
+                            }}
                           >
                             <MantraCard mantra={mantra} />
                           </motion.div>

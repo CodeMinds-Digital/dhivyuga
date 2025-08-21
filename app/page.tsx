@@ -48,22 +48,7 @@ export default function HomePage() {
                   </p>
                 </div>
 
-                {/* Modern CTA Section */}
-                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-4">
-                  <Button
-                    size="lg"
-                    className="px-8 py-3 text-label-large font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    Explore Mantras
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="px-8 py-3 text-label-large font-medium rounded-full border-2 hover:bg-zinc-50 transition-all duration-300"
-                  >
-                    Learn More
-                  </Button>
-                </div>
+
               </div>
             </motion.div>
 

@@ -82,20 +82,20 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
   }
 
   return (
-    <Card className="glass-effect rounded-2xl border-0 sticky top-24">
+    <Card className="card-outlined sticky top-24 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-gradient font-playfair">
+        <CardTitle className="text-title text-zinc-900">
           Filters
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Category Filter */}
         <div>
-          <label className="text-sm font-medium text-slate-700 mb-2 block">
+          <label className="text-label-large font-medium text-zinc-700 mb-3 block">
             Category
           </label>
           <Select value={filters.category} onValueChange={(value) => updateFilter('category', value)}>
-            <SelectTrigger className="rounded-xl border-slate-200">
+            <SelectTrigger className="rounded-lg border-zinc-200 h-11">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
@@ -110,11 +110,11 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Deity Filter */}
         <div>
-          <label className="text-sm font-medium text-slate-700 mb-2 block">
+          <label className="text-label-large font-medium text-zinc-700 mb-3 block">
             Deity
           </label>
           <Select value={filters.deity} onValueChange={(value) => updateFilter('deity', value)}>
-            <SelectTrigger className="rounded-xl border-slate-200">
+            <SelectTrigger className="rounded-lg border-zinc-200 h-11">
               <SelectValue placeholder="Select deity" />
             </SelectTrigger>
             <SelectContent>
@@ -129,11 +129,11 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Kalam Filter */}
         <div>
-          <label className="text-sm font-medium text-slate-700 mb-2 block">
+          <label className="text-label-large font-medium text-zinc-700 mb-3 block">
             Kalam
           </label>
           <Select value={filters.kalam} onValueChange={(value) => updateFilter('kalam', value)}>
-            <SelectTrigger className="rounded-xl border-slate-200">
+            <SelectTrigger className="rounded-lg border-zinc-200 h-11">
               <SelectValue placeholder="Select kalam" />
             </SelectTrigger>
             <SelectContent>
@@ -148,11 +148,11 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Time of Day Filter */}
         <div>
-          <label className="text-sm font-medium text-slate-700 mb-2 block">
+          <label className="text-label-large font-medium text-zinc-700 mb-3 block">
             Time of Day
           </label>
           <Select value={filters.timeOfDay} onValueChange={(value) => updateFilter('timeOfDay', value)}>
-            <SelectTrigger className="rounded-xl border-slate-200">
+            <SelectTrigger className="rounded-lg border-zinc-200 h-11">
               <SelectValue placeholder="Select time" />
             </SelectTrigger>
             <SelectContent>
@@ -167,11 +167,11 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Recitation Count Filter */}
         <div>
-          <label className="text-sm font-medium text-slate-700 mb-2 block">
+          <label className="text-label-large font-medium text-zinc-700 mb-3 block">
             Recitation Count
           </label>
           <Select value={filters.recitationCount} onValueChange={(value) => updateFilter('recitationCount', value)}>
-            <SelectTrigger className="rounded-xl border-slate-200">
+            <SelectTrigger className="rounded-lg border-zinc-200 h-11">
               <SelectValue placeholder="Select count" />
             </SelectTrigger>
             <SelectContent>
@@ -188,7 +188,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
         <Button
           variant="outline"
           onClick={clearFilters}
-          className="w-full rounded-xl border-slate-200 hover:bg-slate-50"
+          className="w-full rounded-lg border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 h-11"
         >
           Clear Filters
         </Button>
