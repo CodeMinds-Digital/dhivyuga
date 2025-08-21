@@ -40,27 +40,27 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="admin-theme min-h-screen bg-background flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:relative lg:flex lg:flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:relative lg:flex lg:flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200">
             <Link href="/admin" className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 admin-gradient rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">D</span>
               </div>
-              <span className="text-xl font-playfair font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                Dhivyuga
+              <span className="text-xl font-playfair font-bold admin-text-gradient">
+                Dhivyuga Admin
               </span>
             </Link>
             <button
@@ -80,12 +80,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                   key={item.name}
                   href={item.href}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-                    ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                    ? 'bg-admin-primary/10 text-admin-primary border border-admin-primary/20'
                     : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <item.icon className={`h-5 w-5 ${isActive ? 'text-purple-600' : 'text-slate-400'}`} />
+                  <item.icon className={`h-5 w-5 ${isActive ? 'text-admin-primary' : 'text-slate-400'}`} />
                   {item.name}
                 </Link>
               )
@@ -95,7 +95,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           {/* User section */}
           <div className="p-4 border-t border-slate-200">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 admin-gradient rounded-full flex items-center justify-center">
                 <span className="text-white font-medium text-sm">A</span>
               </div>
               <div className="flex-1 min-w-0">
@@ -119,7 +119,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen lg:ml-0">
         {/* Top bar */}
-        <div className="sticky top-0 z-30 bg-white border-b border-slate-200">
+        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-zinc-200">
           <div className="flex items-center justify-between h-16 px-6">
             <div className="flex items-center gap-4">
               <button
@@ -139,7 +139,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="pl-10 pr-4 py-2 w-64 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="pl-10 pr-4 py-2 w-64 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-admin-primary focus:border-transparent"
                 />
               </div>
               <Link href="/" className="text-sm text-slate-600 hover:text-slate-900">
@@ -150,7 +150,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 p-6 bg-slate-50">
+        <main className="flex-1 p-6 bg-zinc-50">
           {children}
         </main>
       </div>

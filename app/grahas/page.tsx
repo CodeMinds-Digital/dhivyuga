@@ -112,78 +112,93 @@ export default function GrahasPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col content-bg">
+    <div className="min-h-screen flex flex-col surface">
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-purple-600 via-blue-600 to-purple-700 py-24 px-4 relative overflow-hidden">
-          {/* Floating Elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-bounce"></div>
-            <div className="absolute top-40 right-20 w-16 h-16 bg-white/10 rounded-full animate-pulse"></div>
-            <div className="absolute bottom-40 left-20 w-12 h-12 bg-white/10 rounded-full animate-ping"></div>
+        {/* Modern Hero Section */}
+        <section className="hero-section py-20 md:py-28 px-4 relative overflow-hidden">
+          {/* Subtle geometric pattern */}
+          <div className="absolute inset-0 opacity-[0.02]">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, hsl(var(--primary)) 2px, transparent 2px),
+                               radial-gradient(circle at 75% 75%, hsl(var(--accent)) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px, 40px 40px'
+            }}></div>
           </div>
-          
-          <div className="max-w-4xl mx-auto text-center relative z-10">
+
+          <div className="max-w-6xl mx-auto text-center relative z-10">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="mb-6"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.8,
+                ease: [0.05, 0.7, 0.1, 1]
+              }}
+              className="space-y-8"
             >
-              <span className="inline-block text-6xl mb-4">🪐</span>
+              <div className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="mb-6"
+                >
+                  <span className="inline-block text-6xl mb-4">🪐</span>
+                </motion.div>
+
+                <div className="space-y-4">
+                  <h1 className="text-display bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 bg-clip-text text-transparent">
+                    Navagrahas
+                  </h1>
+                  <p className="text-body-large text-zinc-600 max-w-2xl mx-auto">
+                    The Nine Celestial Bodies and Their Sacred Mantras
+                  </p>
+                </div>
+              </div>
             </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-4xl md:text-6xl font-playfair font-bold bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent mb-6 tracking-tight"
-            >
-              Navagrahas
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed"
-            >
-              The Nine Celestial Bodies and Their Sacred Mantras
-            </motion.p>
           </div>
         </section>
 
         {/* Content */}
-        <section className="py-16 px-4">
-          <div className="max-w-7xl mx-auto">
+        <section className="py-24 px-4 section-bg">
+          <div className="max-w-6xl mx-auto">
             {loading ? (
               <LoadingGrid count={9} />
             ) : error ? (
-              <ErrorMessage 
+              <ErrorMessage
                 title="Failed to load grahas"
                 message={error}
                 onRetry={fetchGrahas}
               />
             ) : (
               <>
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-playfair font-bold text-slate-800 mb-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{
+                    duration: 0.6,
+                    ease: [0.05, 0.7, 0.1, 1]
+                  }}
+                  className="text-center mb-16 space-y-4"
+                >
+                  <h2 className="text-headline text-zinc-900">
                     The Nine Planetary Deities
                   </h2>
-                  <p className="text-lg text-slate-600 max-w-3xl mx-auto">
-                    Each graha represents a celestial force that influences our lives. 
+                  <p className="text-body text-zinc-600 max-w-2xl mx-auto">
+                    Each graha represents a celestial force that influences our lives.
                     Discover their mantras, attributes, and spiritual significance.
                   </p>
-                </div>
+                </motion.div>
 
                 {grahas.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="text-6xl mb-4">🔍</div>
-                    <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                  <div className="text-center py-16">
+                    <div className="text-6xl mb-6">🔍</div>
+                    <h3 className="text-title-large text-zinc-900 mb-3">
                       No grahas found
                     </h3>
-                    <p className="text-slate-600 mb-4">
+                    <p className="text-body text-zinc-600">
                       The planetary deities data is being prepared
                     </p>
                   </div>
@@ -193,77 +208,82 @@ export default function GrahasPage() {
                       <motion.div
                         key={graha.id}
                         initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        transition={{
+                          delay: index * 0.1,
+                          duration: 0.6,
+                          ease: [0.05, 0.7, 0.1, 1]
+                        }}
                       >
-                        <Card className={`h-full hover:shadow-xl transition-all duration-300 ${getColorClass(graha.color)}`}>
+                        <Card className={`card-outlined h-full hover:shadow-lg hover:border-zinc-300 transition-all duration-300 ${getColorClass(graha.color)}`}>
                           <CardHeader className="text-center pb-4">
-                            <div className="text-4xl mb-3">
+                            <div className="text-5xl mb-4">
                               {getGrahaIcon(graha.name)}
                             </div>
-                            <CardTitle className="text-xl font-playfair text-slate-800">
+                            <CardTitle className="text-title-large text-zinc-900">
                               {graha.name}
                             </CardTitle>
                             {graha.sanskrit_name && (
-                              <p className="text-sm text-slate-600 font-medium">
+                              <p className="text-body-small text-zinc-600 font-medium">
                                 {graha.sanskrit_name}
                               </p>
                             )}
                           </CardHeader>
-                          
-                          <CardContent className="space-y-4">
+
+                          <CardContent className="space-y-6">
                             {graha.description && (
-                              <p className="text-sm text-slate-700 leading-relaxed">
-                                {graha.description.length > 120 
-                                  ? `${graha.description.substring(0, 120)}...` 
+                              <p className="text-body-small text-zinc-700 leading-relaxed">
+                                {graha.description.length > 120
+                                  ? `${graha.description.substring(0, 120)}...`
                                   : graha.description}
                               </p>
                             )}
-                            
-                            <div className="grid grid-cols-2 gap-3 text-xs">
+
+                            <div className="grid grid-cols-2 gap-4 text-label">
                               {graha.day_of_week && (
                                 <div>
-                                  <span className="font-medium text-slate-600">Day:</span>
-                                  <p className="text-slate-800">{graha.day_of_week}</p>
+                                  <span className="font-medium text-zinc-500">Day:</span>
+                                  <p className="text-zinc-900 font-medium">{graha.day_of_week}</p>
                                 </div>
                               )}
                               {graha.color && (
                                 <div>
-                                  <span className="font-medium text-slate-600">Color:</span>
-                                  <p className="text-slate-800">{graha.color}</p>
+                                  <span className="font-medium text-zinc-500">Color:</span>
+                                  <p className="text-zinc-900 font-medium">{graha.color}</p>
                                 </div>
                               )}
                               {graha.gemstone && (
                                 <div>
-                                  <span className="font-medium text-slate-600">Gemstone:</span>
-                                  <p className="text-slate-800">{graha.gemstone}</p>
+                                  <span className="font-medium text-zinc-500">Gemstone:</span>
+                                  <p className="text-zinc-900 font-medium">{graha.gemstone}</p>
                                 </div>
                               )}
                               {graha.metal && (
                                 <div>
-                                  <span className="font-medium text-slate-600">Metal:</span>
-                                  <p className="text-slate-800">{graha.metal}</p>
+                                  <span className="font-medium text-zinc-500">Metal:</span>
+                                  <p className="text-zinc-900 font-medium">{graha.metal}</p>
                                 </div>
                               )}
                               {graha.element && (
                                 <div>
-                                  <span className="font-medium text-slate-600">Element:</span>
-                                  <p className="text-slate-800">{graha.element}</p>
+                                  <span className="font-medium text-zinc-500">Element:</span>
+                                  <p className="text-zinc-900 font-medium">{graha.element}</p>
                                 </div>
                               )}
                               {graha.direction && (
                                 <div>
-                                  <span className="font-medium text-slate-600">Direction:</span>
-                                  <p className="text-slate-800">{graha.direction}</p>
+                                  <span className="font-medium text-zinc-500">Direction:</span>
+                                  <p className="text-zinc-900 font-medium">{graha.direction}</p>
                                 </div>
                               )}
                             </div>
-                            
-                            <div className="flex items-center justify-between pt-3 border-t border-slate-200">
-                              <Badge variant="secondary" className="text-xs">
+
+                            <div className="flex items-center justify-between pt-4 border-t border-zinc-200">
+                              <Badge variant="secondary" className="text-label bg-zinc-100 text-zinc-700 border-zinc-200">
                                 {graha.mantra_count} Mantras
                               </Badge>
-                              <button className="text-purple-600 hover:text-purple-700 text-sm font-medium transition-colors">
+                              <button className="text-blue-600 hover:text-blue-700 text-label-large font-medium transition-colors">
                                 View Mantras →
                               </button>
                             </div>

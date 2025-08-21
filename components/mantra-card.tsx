@@ -86,18 +86,18 @@ export function MantraCard({ mantra }: MantraCardProps) {
           </CardHeader>
 
           <CardContent className="pt-0">
-            <p className="text-slate-600 mb-6 line-clamp-3 leading-relaxed">
+            <p className="text-zinc-700 mb-6 line-clamp-3 leading-relaxed font-medium">
               {mantra.text}
             </p>
 
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-slate-500 text-sm">
+              <span className="flex items-center gap-2 text-zinc-600 text-sm font-medium">
                 <Eye className="h-4 w-4" />
                 {mantra.view_count} views
               </span>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-zinc-600 font-medium">
                   Play Audio
                 </span>
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>

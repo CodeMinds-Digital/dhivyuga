@@ -18,13 +18,13 @@ export function QuickFilters() {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-4">
+    <div className="flex flex-wrap justify-center gap-3">
       {quickFilters.map((filter) => (
         <Button
           key={filter.key}
           variant="outline"
           onClick={() => handleFilterClick(filter.category)}
-          className="px-8 py-4 hero-card rounded-2xl hover:bg-white/20 transition-all duration-300 font-medium text-white border-white/20 hover:border-white/40"
+          className="px-6 py-2.5 rounded-full border-zinc-200 text-zinc-700 hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
         >
           {filter.category}
         </Button>
