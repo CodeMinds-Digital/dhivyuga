@@ -7,45 +7,51 @@ import { motion } from 'framer-motion'
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen flex flex-col content-bg">
+    <div className="min-h-screen flex flex-col surface">
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-purple-600 via-blue-600 to-purple-700 py-24 px-4 relative overflow-hidden">
-          {/* Floating Elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-bounce"></div>
-            <div className="absolute top-40 right-20 w-16 h-16 bg-white/10 rounded-full animate-pulse"></div>
-            <div className="absolute bottom-40 left-20 w-12 h-12 bg-white/10 rounded-full animate-ping"></div>
+        {/* Modern Hero Section */}
+        <section className="hero-section py-20 md:py-28 px-4 relative overflow-hidden">
+          {/* Subtle geometric pattern */}
+          <div className="absolute inset-0 opacity-[0.02]">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, hsl(var(--primary)) 2px, transparent 2px),
+                               radial-gradient(circle at 75% 75%, hsl(var(--accent)) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px, 40px 40px'
+            }}></div>
           </div>
 
-          <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="max-w-6xl mx-auto text-center relative z-10">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="mb-6"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.8,
+                ease: [0.05, 0.7, 0.1, 1]
+              }}
+              className="space-y-8"
             >
-              <span className="inline-block text-6xl mb-4">📋</span>
-            </motion.div>
+              <div className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="mb-6"
+                >
+                  <span className="inline-block text-6xl mb-4">📋</span>
+                </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-4xl md:text-6xl font-playfair font-bold bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent mb-6 tracking-tight"
-            >
-              Terms of Service
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed"
-            >
-              Guidelines for using Dhivyuga platform
-            </motion.p>
+                <div className="space-y-4">
+                  <h1 className="text-display bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 bg-clip-text text-transparent">
+                    Terms of Service
+                  </h1>
+                  <p className="text-body-large text-zinc-600 max-w-2xl mx-auto">
+                    Guidelines for using Dhivyuga platform
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </section>
 
