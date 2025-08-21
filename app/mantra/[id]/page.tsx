@@ -7,28 +7,50 @@ import { Footer } from '@/components/footer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Play, Share2, Eye, User, Tag } from 'lucide-react'
+import { Play, Share2, Eye, User, Tag, Globe } from 'lucide-react'
 import { motion } from 'framer-motion'
+import MantraDisplay from '@/components/mantra-display'
+
+interface Language {
+  id: string
+  code: string
+  name: string
+  native_name: string
+  direction: 'ltr' | 'rtl'
+}
+
+interface Translation {
+  id: string
+  language_id: string
+  text: string
+  transliteration: string
+  pronunciation_guide: string
+  meaning: string
+  benefits: string[]
+  usage_notes: string
+  languages: Language
+}
 
 interface MantraDetail {
   id: string
   title: string
   text: string
-  meaning: string
-  transliteration: string
-  nativeScript: string
   view_count: number
   deity: string
   category: string
   recitationCount: string
   bestTime: string
-  benefits: string[]
+  translations: Translation[]
+  benefits?: string[] // For backward compatibility
+  deities?: { id: string; name: string }
+  categories?: { id: string; name: string }
+  recitation_counts?: { id: string; count_value: number }
+  recitation_times?: { id: string; name: string }
 }
 
 export default function MantraDetailPage() {
   const [mantra, setMantra] = useState<MantraDetail | null>(null)
   const [loading, setLoading] = useState(true)
-  const [activeScript, setActiveScript] = useState('transliteration')
 
   const params = useParams()
   const id = params.id as string
@@ -45,26 +67,33 @@ export default function MantraDetailPage() {
         const data = await response.json()
         const mantraData = data.mantra
 
+        // Translations data loaded successfully
+
         // Transform API data to match component interface
         setMantra({
           id: mantraData.id,
           title: mantraData.title,
           text: mantraData.text,
-          meaning: 'Detailed meaning and significance of this sacred mantra...',
-          transliteration: mantraData.title, // Use title as transliteration for now
-          nativeScript: mantraData.text,
           view_count: mantraData.view_count || 0,
           deity: mantraData.deities?.name || 'Unknown',
           category: mantraData.categories?.name || 'General',
           recitationCount: mantraData.recitation_counts?.count_value ? `${mantraData.recitation_counts.count_value} times` : '108 times',
           bestTime: mantraData.recitation_times?.name || 'Morning',
-          benefits: [
-            'Spiritual growth and inner peace',
-            'Divine blessings and protection',
-            'Positive energy and harmony',
-            'Mental clarity and focus',
-            'Overall well-being'
-          ]
+          translations: mantraData.translations || [],
+          // Fallback benefits for mantras without translations
+          benefits: mantraData.translations && mantraData.translations.length > 0
+            ? [] // Will use benefits from translations
+            : [
+              'Spiritual growth and inner peace',
+              'Divine blessings and protection',
+              'Positive energy and harmony',
+              'Mental clarity and focus',
+              'Overall well-being'
+            ],
+          deities: mantraData.deities,
+          categories: mantraData.categories,
+          recitation_counts: mantraData.recitation_counts,
+          recitation_times: mantraData.recitation_times
         })
 
         // Track view
@@ -82,10 +111,16 @@ export default function MantraDetailPage() {
   }
 
   const handleShare = () => {
-    if (navigator.share) {
+    if (navigator.share && mantra) {
+      // Get meaning from the first available translation, or use a default description
+      const firstTranslation = mantra.translations?.[0]
+      const description = firstTranslation?.meaning
+        ? firstTranslation.meaning.replace(/<[^>]*>/g, '') // Remove HTML tags
+        : `${mantra.title} - Sacred mantra for spiritual practice`
+
       navigator.share({
-        title: mantra?.title,
-        text: mantra?.meaning,
+        title: mantra.title,
+        text: description,
         url: window.location.href
       })
     }
@@ -200,48 +235,45 @@ export default function MantraDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2">
-                <Card className="card-outlined mb-8 shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-title text-zinc-900">
-                      Mantra Text
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Tabs value={activeScript} onValueChange={setActiveScript}>
-                      <TabsList className="grid w-full grid-cols-2 bg-zinc-100">
-                        <TabsTrigger value="transliteration" className="data-[state=active]:bg-white data-[state=active]:text-zinc-900">Transliteration</TabsTrigger>
-                        <TabsTrigger value="devanagari" className="data-[state=active]:bg-white data-[state=active]:text-zinc-900">Devanagari</TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="transliteration" className="mt-6">
-                        <div className="text-center p-8 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl border border-zinc-100">
-                          <p className="text-2xl md:text-3xl font-medium text-zinc-900 leading-relaxed">
-                            {mantra.transliteration}
-                          </p>
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="devanagari" className="mt-6">
-                        <div className="text-center p-8 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-zinc-100">
-                          <p className="text-2xl md:text-3xl font-medium text-zinc-900 leading-relaxed">
-                            {mantra.text}
-                          </p>
-                        </div>
-                      </TabsContent>
-                    </Tabs>
-                  </CardContent>
-                </Card>
+                {(() => {
+                  // Check for valid translations
+                  const hasTranslations = Array.isArray(mantra.translations) &&
+                    mantra.translations.length > 0 &&
+                    mantra.translations.some(t => t && t.text && t.text.trim().length > 0)
 
-                <Card className="card-outlined shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-title text-zinc-900">
-                      Meaning
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-body text-zinc-700 leading-relaxed">
-                      {mantra.meaning}
-                    </p>
-                  </CardContent>
-                </Card>
+                  return hasTranslations
+                })() ? (
+                  <MantraDisplay
+                    title="Mantra Text & Translations"
+                    translations={mantra.translations}
+                    defaultLanguage="ta"
+                    showMeaning={true}
+                    showBenefits={true}
+                    className="mb-8"
+                  />
+                ) : (
+                  // Fallback for mantras without translations
+                  <Card className="card-outlined mb-8 shadow-sm">
+                    <CardHeader>
+                      <CardTitle className="text-title text-zinc-900">
+                        Mantra Text
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-center p-8 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-zinc-100">
+                        <p className="text-2xl md:text-3xl font-medium text-zinc-900 leading-relaxed">
+                          {mantra.text}
+                        </p>
+                      </div>
+                      <div className="mt-4 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-200">
+                        <p className="text-sm text-amber-800">
+                          <Globe className="h-4 w-4 inline mr-2" />
+                          No translations available yet. Add translations in the admin panel.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
 
               {/* Sidebar */}
@@ -272,23 +304,26 @@ export default function MantraDetailPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="glass-effect rounded-2xl border-0">
-                  <CardHeader>
-                    <CardTitle className="text-gradient font-playfair">
-                      Benefits
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {mantra.benefits.map((benefit, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <span className="text-slate-700">{benefit}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
+                {/* Only show benefits section for mantras without translations */}
+                {(!mantra.translations || mantra.translations.length === 0) && mantra.benefits && (
+                  <Card className="glass-effect rounded-2xl border-0">
+                    <CardHeader>
+                      <CardTitle className="text-gradient font-playfair">
+                        Benefits
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {mantra.benefits.map((benefit, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-slate-700">{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </div>
           </div>

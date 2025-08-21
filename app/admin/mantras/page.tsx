@@ -10,9 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Edit, Trash2, Eye, ArrowLeft } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, ArrowLeft, Globe } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Label } from '@/components/ui/label'
+import LanguageManager from '@/components/admin/language-manager'
 import Link from 'next/link'
 
 interface Mantra {
@@ -201,112 +204,147 @@ export default function MantraManagementPage() {
                 Add Mantra
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingMantra ? 'Edit Mantra' : 'Add New Mantra'}
                 </DialogTitle>
               </DialogHeader>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Title</label>
-                  <Input
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Enter mantra title"
-                    required
-                  />
-                </div>
+              <Tabs defaultValue="basic" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
+                  <TabsTrigger
+                    value="basic"
+                    className="font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-700"
+                  >
+                    Basic Information
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="translations"
+                    disabled={!editingMantra}
+                    className="font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    Language Translations
+                  </TabsTrigger>
+                </TabsList>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">Text</label>
-                  <Textarea
-                    value={formData.text}
-                    onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
-                    placeholder="Enter mantra text"
-                    rows={3}
-                    required
-                  />
-                </div>
+                <TabsContent value="basic" className="space-y-4 mt-6">
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium">Title</Label>
+                      <Input
+                        value={formData.title}
+                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="Enter mantra title"
+                        required
+                        className="mt-2"
+                      />
+                    </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Deity</label>
-                    <Select value={formData.deity_id} onValueChange={(value) => setFormData(prev => ({ ...prev, deity_id: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select deity" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {deities.map((deity) => (
-                          <SelectItem key={deity.id} value={deity.id}>
-                            {deity.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                    <div>
+                      <Label className="text-sm font-medium">Text</Label>
+                      <Textarea
+                        value={formData.text}
+                        onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
+                        placeholder="Enter mantra text"
+                        rows={3}
+                        required
+                        className="mt-2"
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Category</label>
-                    <Select value={formData.category_id} onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium">Deity</Label>
+                        <Select value={formData.deity_id} onValueChange={(value) => setFormData(prev => ({ ...prev, deity_id: value }))}>
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Select deity" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {deities.map((deity) => (
+                              <SelectItem key={deity.id} value={deity.id}>
+                                {deity.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Recitation Count</label>
-                    <Select value={formData.count_id} onValueChange={(value) => setFormData(prev => ({ ...prev, count_id: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select count" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {recitationCounts.map((count) => (
-                          <SelectItem key={count.id} value={count.id}>
-                            {count.count_value} times
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <div>
+                        <Label className="text-sm font-medium">Category</Label>
+                        <Select value={formData.category_id} onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}>
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Best Time</label>
-                    <Select value={formData.time_id} onValueChange={(value) => setFormData(prev => ({ ...prev, time_id: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select time" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {recitationTimes.map((time) => (
-                          <SelectItem key={time.id} value={time.id}>
-                            {time.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium">Recitation Count</Label>
+                        <Select value={formData.count_id} onValueChange={(value) => setFormData(prev => ({ ...prev, count_id: value }))}>
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Select count" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {recitationCounts.map((count) => (
+                              <SelectItem key={count.id} value={count.id}>
+                                {count.count_value} times
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit">
-                    {editingMantra ? 'Update' : 'Create'} Mantra
-                  </Button>
-                </div>
-              </form>
+                      <div>
+                        <Label className="text-sm font-medium">Best Time</Label>
+                        <Select value={formData.time_id} onValueChange={(value) => setFormData(prev => ({ ...prev, time_id: value }))}>
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Select time" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {recitationTimes.map((time) => (
+                              <SelectItem key={time.id} value={time.id}>
+                                {time.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-4">
+                      <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button type="submit">
+                        {editingMantra ? 'Update' : 'Create'} Mantra
+                      </Button>
+                    </div>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="translations" className="mt-6">
+                  {editingMantra && (
+                    <LanguageManager
+                      mantraId={editingMantra.id}
+                      onTranslationsChange={(translations) => {
+                        // Handle translations change if needed
+                        console.log('Translations updated:', translations)
+                      }}
+                    />
+                  )}
+                </TabsContent>
+              </Tabs>
             </DialogContent>
           </Dialog>
         </div>
