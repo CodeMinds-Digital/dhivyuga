@@ -207,49 +207,73 @@ export default function CategoryManagementPage() {
                 <CardTitle>All Categories ({categories.length})</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {categories.map((category) => (
                     <motion.div
                       key={category.id}
-                      whileHover={{ y: -2 }}
-                      className="p-4 border rounded-lg hover:shadow-md transition-all"
+                      whileHover={{ y: -4 }}
+                      transition={{ duration: 0.2 }}
+                      className="admin-category-card p-6 relative group"
                     >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Tag className="h-4 w-4 text-purple-600" />
-                          <h3 className="font-semibold">{category.name}</h3>
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-gradient-to-br from-admin-primary/10 to-admin-secondary/10 rounded-lg">
+                            <Tag className="h-5 w-5 text-admin-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-lg text-slate-900 group-hover:text-admin-primary transition-colors">
+                              {category.name}
+                            </h3>
+                            <Badge
+                              variant="secondary"
+                              className="mt-1 bg-admin-primary/10 text-admin-primary border-admin-primary/20"
+                            >
+                              {category.mantra_count} mantras
+                            </Badge>
+                          </div>
                         </div>
-                        <Badge variant="secondary">
-                          {category.mantra_count} mantras
-                        </Badge>
-                      </div>
 
-                      {category.description && (
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                          {category.description}
-                        </p>
-                      )}
-
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs text-muted-foreground">
-                          Created {new Date(category.created_at).toLocaleDateString()}
-                        </span>
-                        <div className="flex gap-1">
+                        {/* Action Buttons */}
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => handleEdit(category)}
+                            className="h-8 w-8 p-0 hover:bg-admin-primary/10 hover:text-admin-primary"
                           >
-                            <Edit className="h-3 w-3" />
+                            <Edit className="h-4 w-4" />
                           </Button>
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => handleDelete(category.id)}
-                            className="text-red-600 hover:text-red-700"
+                            className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-700"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      {category.description && (
+                        <p className="text-zinc-700 text-sm mb-4 line-clamp-2 leading-relaxed font-medium">
+                          {category.description}
+                        </p>
+                      )}
+
+                      {/* Footer */}
+                      <div className="flex justify-between items-center pt-3 border-t border-slate-100">
+                        <span className="text-xs text-zinc-600 font-medium">
+                          Created {new Date(category.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span className="text-xs text-zinc-600 font-medium">Active</span>
                         </div>
                       </div>
                     </motion.div>

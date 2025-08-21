@@ -69,14 +69,21 @@ export function DeityGrid() {
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
       {deities.map((deity) => (
         <Link key={deity.id} href={`/search?deity=${deity.name}`}>
-          <Card className="text-center card-hover glass-effect rounded-2xl overflow-hidden">
-            <CardContent className="p-6">
-              <h3 className="font-playfair font-semibold text-gradient text-lg mb-2">
-                {deity.name}
-              </h3>
-              <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
-                {deity.description}
-              </p>
+          <Card className="card-outlined text-center group hover:shadow-lg hover:border-zinc-300 transition-all duration-300 h-full">
+            <CardContent className="p-6 flex flex-col h-full">
+              <div className="space-y-4 flex-1">
+                <div className="w-14 h-14 mx-auto bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-sm">
+                  <div className="w-7 h-7 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl shadow-sm"></div>
+                </div>
+                <div className="space-y-3 flex-1">
+                  <h3 className="text-title font-semibold text-zinc-900 group-hover:text-purple-600 transition-colors duration-200">
+                    {deity.name}
+                  </h3>
+                  <p className="text-body-small text-zinc-600 line-clamp-2 leading-relaxed">
+                    {deity.description}
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </Link>

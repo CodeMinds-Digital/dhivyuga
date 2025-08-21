@@ -12,31 +12,31 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md border-b bg-white/95 border-slate-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-playfair font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:from-purple-700 hover:to-blue-700 transition-all">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-zinc-200/80 shadow-sm">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="text-title-large font-bold bg-gradient-to-r from-zinc-900 to-zinc-700 bg-clip-text text-transparent hover:from-zinc-800 hover:to-zinc-600 transition-all duration-200">
           Dhivyuga
         </Link>
 
         <nav className="hidden md:flex items-center space-x-1">
-          <Link href="/" className={`px-4 py-2 rounded-lg transition-all font-medium ${isHomePage || pathname === '/search' || pathname.startsWith('/mantra')
-            ? 'bg-purple-100 text-purple-700 font-semibold shadow-sm'
-            : 'text-slate-700 hover:bg-purple-50 hover:text-purple-600'
+          <Link href="/" className={`px-4 py-2.5 rounded-lg transition-all font-medium text-label-large ${isHomePage || pathname === '/search' || pathname.startsWith('/mantra')
+            ? 'bg-zinc-900 text-white shadow-sm'
+            : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
             }`}>
             Mantras
           </Link>
-          <Link href="/grahas" className={`px-4 py-2 rounded-lg transition-all font-medium ${pathname === '/grahas' || pathname.startsWith('/graha')
-            ? 'bg-purple-100 text-purple-700 font-semibold shadow-sm'
-            : 'text-slate-700 hover:bg-purple-50 hover:text-purple-600'
+          <Link href="/grahas" className={`px-4 py-2.5 rounded-lg transition-all font-medium text-label-large ${pathname === '/grahas' || pathname.startsWith('/graha')
+            ? 'bg-zinc-900 text-white shadow-sm'
+            : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
             }`}>
             Grahas
           </Link>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2 rounded-md transition-colors text-slate-700 hover:bg-slate-100"
+            className="md:hidden p-2 rounded-lg transition-colors text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -46,7 +46,7 @@ export function Header() {
             <Button
               variant="outline"
               size="sm"
-              className="font-medium transition-all border-purple-200 text-purple-600 hover:bg-purple-50 hover:border-purple-300 bg-white"
+              className="font-medium border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
             >
               Admin
             </Button>
@@ -61,8 +61,8 @@ export function Header() {
             <Link
               href="/"
               className={`block py-3 px-4 rounded-lg transition-all font-medium ${isHomePage || pathname === '/search' || pathname.startsWith('/mantra')
-                  ? 'bg-purple-100 text-purple-700 font-semibold'
-                  : 'text-slate-700 hover:bg-purple-50 hover:text-purple-600'
+                ? 'bg-purple-100 text-purple-700 font-semibold'
+                : 'text-slate-700 hover:bg-purple-50 hover:text-purple-600'
                 }`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -71,8 +71,8 @@ export function Header() {
             <Link
               href="/grahas"
               className={`block py-3 px-4 rounded-lg transition-all font-medium ${pathname === '/grahas' || pathname.startsWith('/graha')
-                  ? 'bg-purple-100 text-purple-700 font-semibold'
-                  : 'text-slate-700 hover:bg-purple-50 hover:text-purple-600'
+                ? 'bg-purple-100 text-purple-700 font-semibold'
+                : 'text-slate-700 hover:bg-purple-50 hover:text-purple-600'
                 }`}
               onClick={() => setIsMobileMenuOpen(false)}
             >

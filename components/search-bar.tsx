@@ -99,10 +99,10 @@ export function SearchBar({ defaultValue = '' }: SearchBarProps) {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto mb-12 relative">
+    <div className="w-full max-w-2xl mx-auto relative">
       <form onSubmit={handleSubmit}>
-        <div className="relative hero-card rounded-2xl p-3 glow-effect">
-          <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-white/70 h-6 w-6" />
+        <div className="relative card-outlined p-1 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 h-5 w-5" />
           <Input
             ref={inputRef}
             type="text"
@@ -111,11 +111,12 @@ export function SearchBar({ defaultValue = '' }: SearchBarProps) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-            className="pl-16 pr-32 h-18 text-lg rounded-xl border-0 focus:outline-none bg-transparent placeholder:text-white/60 font-medium text-white"
+            className="pl-12 pr-28 h-14 text-body rounded-lg border-0 focus:outline-none bg-transparent placeholder:text-zinc-400 font-medium focus:ring-0"
           />
           <Button
             type="submit"
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white text-purple-700 px-8 py-3 rounded-xl hover:bg-white/90 transition-all duration-300 font-medium border-0 shadow-lg"
+            size="default"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2.5 rounded-lg font-medium shadow-sm"
           >
             Search
           </Button>
@@ -126,18 +127,18 @@ export function SearchBar({ defaultValue = '' }: SearchBarProps) {
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute top-full left-0 right-0 hero-card rounded-2xl shadow-xl z-50 mt-3 max-h-60 overflow-y-auto border-0"
+          className="absolute top-full left-0 right-0 card-outlined shadow-xl z-50 mt-3 max-h-64 overflow-y-auto"
         >
           {suggestions.map((suggestion, index) => (
             <button
               key={index}
-              className={`w-full text-left px-6 py-4 hover:bg-white/20 flex items-center gap-4 transition-all duration-200 first:rounded-t-2xl last:rounded-b-2xl ${index === selectedIndex ? 'bg-white/20' : ''
+              className={`w-full text-left px-4 py-3.5 hover:bg-zinc-50 flex items-center gap-3 transition-all duration-150 first:rounded-t-lg last:rounded-b-lg ${index === selectedIndex ? 'bg-zinc-50' : ''
                 }`}
               onClick={() => handleSearch(suggestion.text)}
             >
-              <span className="text-lg">{getTypeIcon(suggestion.type)}</span>
-              <span className="flex-1 font-medium text-white">{suggestion.text}</span>
-              <span className="text-xs text-white/70 capitalize bg-white/20 px-2 py-1 rounded-full">
+              <span className="text-base">{getTypeIcon(suggestion.type)}</span>
+              <span className="flex-1 font-medium text-zinc-900">{suggestion.text}</span>
+              <span className="text-label text-zinc-500 capitalize bg-zinc-100 px-2.5 py-1 rounded-full">
                 {suggestion.type}
               </span>
             </button>

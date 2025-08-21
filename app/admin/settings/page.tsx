@@ -45,6 +45,21 @@ interface TimeRange {
   created_at: string
 }
 
+// Combined type for form data that includes all possible properties
+interface FormData {
+  id?: string
+  name?: string
+  description?: string | null
+  count_value?: number
+  is_auspicious?: boolean
+  start_time?: string
+  end_time?: string
+  created_at?: string
+}
+
+// Union type for editing items
+type EditingItem = RecitationTime | RecitationCount | Kalam | TimeRange | null
+
 export default function SettingsManagementPage() {
   const [recitationTimes, setRecitationTimes] = useState<RecitationTime[]>([])
   const [recitationCounts, setRecitationCounts] = useState<RecitationCount[]>([])
@@ -53,8 +68,8 @@ export default function SettingsManagementPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('times')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingItem, setEditingItem] = useState<any>(null)
-  const [formData, setFormData] = useState<any>({})
+  const [editingItem, setEditingItem] = useState<EditingItem>(null)
+  const [formData, setFormData] = useState<FormData>({})
 
   useEffect(() => {
     fetchAllData()
@@ -466,7 +481,7 @@ export default function SettingsManagementPage() {
                       <TableRow key={kalam.id}>
                         <TableCell className="font-medium">{kalam.name}</TableCell>
                         <TableCell>
-                          <Badge variant={kalam.is_auspicious ? "default" : "secondary"}>
+                          <Badge variant={kalam.is_auspicious ? "success" : "secondary"}>
                             {kalam.is_auspicious ? 'Yes' : 'No'}
                           </Badge>
                         </TableCell>
