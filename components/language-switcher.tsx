@@ -48,7 +48,7 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
-            className={`cursor-pointer ${locale === language.code ? 'bg-primary/10' : ''}`}
+            className={`cursor-pointer ${locale === language.code ? 'bg-zinc-100 text-zinc-900' : ''}`}
           >
             <div className="flex flex-col">
               <span className="font-medium">{language.nativeName}</span>

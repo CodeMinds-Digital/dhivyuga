@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
@@ -20,7 +20,7 @@ interface Mantra {
   categories?: { name: string }
 }
 
-export default function SearchPage() {
+function SearchPageContent() {
   const [mantras, setMantras] = useState<Mantra[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -167,5 +167,23 @@ export default function SearchPage() {
 
       <Footer />
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col surface">
+        <Header />
+        <main className="flex-1 py-8 px-4">
+          <div className="max-w-6xl mx-auto">
+            <LoadingGrid count={6} />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   )
 }
