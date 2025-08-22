@@ -557,11 +557,13 @@ body.admin-theme {
 /* Modern Text Styles */
 .text-gradient {
   background: linear-gradient(135deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--accent)) 100%);
+      #6d28d9 0%,
+      #7c3aed 50%,
+      #8b5cf6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: #374151; /* Fallback color for browsers that don't support background-clip */
 }
 
 .hero-text-gradient {

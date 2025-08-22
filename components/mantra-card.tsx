@@ -47,7 +47,7 @@ export function MantraCard({ mantra }: MantraCardProps) {
         <Card className="h-full card-hover glass-effect rounded-2xl overflow-hidden group">
           <CardHeader className="pb-4">
             <div className="flex justify-between items-start mb-2">
-              <CardTitle className="text-xl font-playfair text-gradient line-clamp-2 leading-tight group-hover:text-purple-700 transition-colors">
+              <CardTitle className="text-xl font-playfair text-gray-900 line-clamp-2 leading-tight group-hover:text-purple-700 transition-colors font-semibold">
                 {mantra.title}
               </CardTitle>
               <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
