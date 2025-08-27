@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/ui/optimized-image'
 
 export function SacredSymbolsBar() {
   return (
@@ -21,12 +21,13 @@ export function SacredSymbolsBar() {
               transition={{ duration: 0.2 }}
               title="OM - The Universal Sound"
             >
-              <Image
+              <OptimizedImage
                 src="/images/hinduism.png"
                 alt="OM Symbol"
                 width={24}
                 height={24}
                 className="cursor-default"
+                title="OM - The Universal Sound"
               />
             </motion.div>
 
@@ -40,12 +41,13 @@ export function SacredSymbolsBar() {
               transition={{ duration: 0.2 }}
               title="Ganesha - Remover of Obstacles"
             >
-              <Image
+              <OptimizedImage
                 src="/images/ganesha.png"
                 alt="Ganesha Symbol"
                 width={24}
                 height={24}
                 className="cursor-default"
+                title="Ganesha - Remover of Obstacles"
               />
             </motion.div>
 
@@ -59,12 +61,13 @@ export function SacredSymbolsBar() {
               transition={{ duration: 0.2 }}
               title="Swastika - Symbol of Auspiciousness"
             >
-              <Image
+              <OptimizedImage
                 src="/images/swastika.png"
                 alt="Swastika Symbol"
                 width={24}
                 height={24}
                 className="cursor-default"
+                title="Swastika - Symbol of Auspiciousness"
               />
             </motion.div>
           </motion.div>

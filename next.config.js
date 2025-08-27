@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    unoptimized: process.env.NODE_ENV === 'production', // Disable optimization for static export
     remotePatterns: [
       {
         protocol: 'https',
@@ -12,6 +13,10 @@ const nextConfig = {
       },
     ],
   },
+
+  // Static asset handling for Netlify
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
+  trailingSlash: true,
 
   // Fix CSS loading issues in development
   ...(process.env.NODE_ENV === 'development' && {

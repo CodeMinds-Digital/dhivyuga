@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "dev:clean": "node scripts/dev-with-css-fix.js",
+    "prebuild": "node scripts/prepare-static-assets.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next node_modules/.cache",
-    "dev:fresh": "npm run clean && npm run dev"
+    "dev:fresh": "npm run clean && npm run dev",
+    "prepare-assets": "node scripts/prepare-static-assets.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
