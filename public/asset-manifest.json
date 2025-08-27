@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-08-27T03:34:52.041Z",
+  "images": [
+    {
+      "name": "hinduism.png",
+      "path": "/images/hinduism.png",
+      "exists": true
+    },
+    {
+      "name": "ganesha.png",
+      "path": "/images/ganesha.png",
+      "exists": true
+    },
+    {
+      "name": "swastika.png",
+      "path": "/images/swastika.png",
+      "exists": true
+    }
+  ]
+}

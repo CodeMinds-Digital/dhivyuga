@@ -1,6 +1,6 @@
 [build]
   publish = ".next"
-  command = "npm ci --legacy-peer-deps && npm run build"
+  command = "npm ci --legacy-peer-deps && npm run prepare-assets && npm run build"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -17,3 +17,35 @@
 
 [context.branch-deploy]
   command = "npm ci --legacy-peer-deps && npm run build"
+
+# Static file handling
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirect rules for Next.js
+[[redirects]]
+  from = "/_next/static/*"
+  to = "/_next/static/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/images/*"
+  to = "/images/:splat"
+  status = 200
