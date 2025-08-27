@@ -20,10 +20,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check current session on mount
+    // Check current session on mount with faster timeout
     const checkSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
+        // Set a shorter timeout for faster loading
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Session check timeout')), 2000)
+        )
+
+        const sessionPromise = supabase.auth.getSession()
+
+        const { data: { session }, error } = await Promise.race([
+          sessionPromise,
+          timeoutPromise
+        ]) as any
+
         if (error) {
           console.error('Error getting session:', error)
           setIsAuthenticated(false)
@@ -44,7 +55,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    // Start session check immediately
     checkSession()
+
+    // Also set a fallback to stop loading after 3 seconds max
+    const fallbackTimeout = setTimeout(() => {
+      setLoading(false)
+    }, 3000)
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -60,7 +77,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(fallbackTimeout)
+    }
   }, [])
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {

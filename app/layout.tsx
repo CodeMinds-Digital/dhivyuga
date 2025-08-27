@@ -1,7 +1,6 @@
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/auth-context';
-import { CSSLoader } from '@/components/css-loader';
 import { CSSPreloader } from '@/components/css-preloader';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -22,11 +21,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
         <CSSPreloader />
-        <CSSLoader>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </CSSLoader>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
