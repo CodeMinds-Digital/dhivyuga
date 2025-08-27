@@ -17,7 +17,10 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Brand */}
           <div className="text-center md:text-left">
-            <h3 className="text-2xl font-playfair font-bold text-gradient mb-4">Dhivyuga</h3>
+            <div className="mb-4">
+              <h3 className="text-2xl font-playfair font-bold text-gradient mb-1">திவ்யுகா</h3>
+              <p className="text-sm text-slate-500">दिव्युगा • Dhivyuga</p>
+            </div>
             <p className="text-slate-600 leading-relaxed">
               Discover sacred mantras for spiritual growth, prosperity, and divine connection.
             </p>
@@ -50,7 +53,7 @@ export function Footer() {
 
         <div className="border-t border-slate-200 pt-8 text-center">
           <p className="text-slate-600">
-            &copy; 2025 Dhivyuga. All rights reserved. Made with devotion for spiritual seekers.
+            &copy; 2025 திவ்யுகா (Dhivyuga). All rights reserved. Made with devotion for spiritual seekers.
           </p>
         </div>
       </div>

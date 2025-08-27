@@ -15,7 +15,10 @@ export function Header() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-zinc-200/80 shadow-sm">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-title-large font-bold bg-gradient-to-r from-zinc-900 to-zinc-700 bg-clip-text text-transparent hover:from-zinc-800 hover:to-zinc-600 transition-all duration-200">
-          Dhivyuga
+          <div className="flex flex-col items-start">
+            <span className="text-lg leading-tight">திவ்யுகா</span>
+            <span className="text-xs text-zinc-500 font-normal leading-tight">दिव्युगा • Dhivyuga</span>
+          </div>
         </Link>
 
         <nav className="hidden md:flex items-center space-x-1">
@@ -25,12 +28,7 @@ export function Header() {
             }`}>
             Mantras
           </Link>
-          <Link href="/grahas" className={`px-4 py-2.5 rounded-lg transition-all font-medium text-label-large ${pathname === '/grahas' || pathname.startsWith('/graha')
-            ? 'bg-zinc-900 text-white shadow-sm'
-            : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
-            }`}>
-            Grahas
-          </Link>
+          {/* Grahas link hidden */}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -42,15 +40,7 @@ export function Header() {
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
 
-          <Link href="/admin">
-            <Button
-              variant="outline"
-              size="sm"
-              className="font-medium border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
-            >
-              Admin
-            </Button>
-          </Link>
+
         </div>
       </div>
 
@@ -68,16 +58,7 @@ export function Header() {
             >
               Mantras
             </Link>
-            <Link
-              href="/grahas"
-              className={`block py-3 px-4 rounded-lg transition-all font-medium ${pathname === '/grahas' || pathname.startsWith('/graha')
-                ? 'bg-purple-100 text-purple-700 font-semibold'
-                : 'text-slate-700 hover:bg-purple-50 hover:text-purple-600'
-                }`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Grahas
-            </Link>
+            {/* Grahas link hidden from mobile menu */}
           </div>
         </div>
       )}

@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Edit, Trash2, ArrowLeft, User } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Plus, Edit, Trash2, ArrowLeft, User, Eye, EyeOff } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { AdminLayout } from '@/components/admin/admin-layout'
 import Link from 'next/link'
@@ -17,6 +18,7 @@ interface Deity {
   id: string
   name: string
   description: string | null
+  is_active: boolean
   created_at: string
   mantra_count?: number
 }
@@ -24,6 +26,7 @@ interface Deity {
 interface FormData {
   name: string
   description: string
+  is_active: boolean
 }
 
 export default function DeityManagementPage() {
@@ -33,7 +36,8 @@ export default function DeityManagementPage() {
   const [editingDeity, setEditingDeity] = useState<Deity | null>(null)
   const [formData, setFormData] = useState<FormData>({
     name: '',
-    description: ''
+    description: '',
+    is_active: true
   })
 
   useEffect(() => {
@@ -43,7 +47,7 @@ export default function DeityManagementPage() {
   const fetchDeities = async () => {
     setLoading(true)
     try {
-      // Fetch deities with mantra count
+      // Fetch deities with mantra count (admin sees all deities)
       const { data: deitiesData } = await supabase
         .from('deities')
         .select(`
@@ -63,6 +67,25 @@ export default function DeityManagementPage() {
       console.error('Error fetching deities:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const toggleDeityStatus = async (deity: Deity) => {
+    try {
+      const { error } = await supabase
+        .from('deities')
+        .update({ is_active: !deity.is_active })
+        .eq('id', deity.id)
+
+      if (error) throw error
+
+      // Update local state
+      setDeities(prev => prev.map(d =>
+        d.id === deity.id ? { ...d, is_active: !d.is_active } : d
+      ))
+    } catch (error) {
+      console.error('Error toggling deity status:', error)
+      alert('Failed to update deity status')
     }
   }
 
@@ -89,7 +112,7 @@ export default function DeityManagementPage() {
 
       setIsDialogOpen(false)
       setEditingDeity(null)
-      setFormData({ name: '', description: '' })
+      setFormData({ name: '', description: '', is_active: true })
       fetchDeities()
     } catch (error) {
       console.error('Error saving deity:', error)
@@ -101,7 +124,8 @@ export default function DeityManagementPage() {
     setEditingDeity(deity)
     setFormData({
       name: deity.name,
-      description: deity.description || ''
+      description: deity.description || '',
+      is_active: deity.is_active
     })
     setIsDialogOpen(true)
   }
@@ -125,7 +149,7 @@ export default function DeityManagementPage() {
 
   const openCreateDialog = () => {
     setEditingDeity(null)
-    setFormData({ name: '', description: '' })
+    setFormData({ name: '', description: '', is_active: true })
     setIsDialogOpen(true)
   }
 
@@ -184,6 +208,22 @@ export default function DeityManagementPage() {
                   />
                 </div>
 
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">Active Status</label>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm ${formData.is_active ? 'text-gray-500' : 'text-green-600 font-medium'}`}>
+                      Inactive
+                    </span>
+                    <Switch
+                      checked={formData.is_active}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                    />
+                    <span className={`text-sm ${formData.is_active ? 'text-green-600 font-medium' : 'text-gray-500'}`}>
+                      Active
+                    </span>
+                  </div>
+                </div>
+
                 <div className="flex justify-end gap-2 pt-4">
                   <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                     Cancel
@@ -224,18 +264,41 @@ export default function DeityManagementPage() {
                             <h3 className="font-semibold text-lg text-slate-900 group-hover:text-admin-secondary transition-colors">
                               {deity.name}
                             </h3>
-                            <Badge
-                              variant="secondary"
-                              className="mt-1 bg-admin-secondary/10 text-admin-secondary border-admin-secondary/20"
-                            >
-                              {deity.mantra_count} mantras
-                            </Badge>
+                            <div className="flex gap-2 mt-1">
+                              <Badge
+                                variant="secondary"
+                                className="bg-admin-secondary/10 text-admin-secondary border-admin-secondary/20"
+                              >
+                                {deity.mantra_count} mantras
+                              </Badge>
+                              <Badge
+                                variant={deity.is_active ? "default" : "secondary"}
+                                className={deity.is_active
+                                  ? "bg-green-100 text-green-700 border-green-200"
+                                  : "bg-red-100 text-red-700 border-red-200"
+                                }
+                              >
+                                {deity.is_active ? 'Active' : 'Inactive'}
+                              </Badge>
+                            </div>
                           </div>
                         </div>
 
 
                         {/* Action Buttons */}
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => toggleDeityStatus(deity)}
+                            className={`h-8 w-8 p-0 ${deity.is_active
+                              ? 'text-green-600 hover:bg-green-50 hover:text-green-700'
+                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              }`}
+                            title={deity.is_active ? 'Deactivate deity' : 'Activate deity'}
+                          >
+                            {deity.is_active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                          </Button>
                           <Button
                             size="sm"
                             variant="ghost"

@@ -21,21 +21,39 @@ interface MantraCardProps {
 
 export function MantraCard({ mantra }: MantraCardProps) {
 
-  const handleShare = (e: React.MouseEvent) => {
+  const handleShare = async (e: React.MouseEvent) => {
     e.preventDefault()
     if (navigator.share) {
-      navigator.share({
-        title: mantra.title,
-        text: mantra.text,
-        url: `${window.location.origin}/mantra/${mantra.id}`
-      })
+      try {
+        await navigator.share({
+          title: mantra.title,
+          text: mantra.text,
+          url: `${window.location.origin}/mantra/${mantra.id}`
+        })
+      } catch (error) {
+        // Handle cancellation gracefully - don't show error for user cancellation
+        if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled the share - this is normal behavior, do nothing
+          return
+        }
+        // Only log other types of errors
+        console.error('Error sharing:', error)
+      }
     }
   }
 
   const handlePlay = (e: React.MouseEvent) => {
     e.preventDefault()
-    // Future: Implement audio playback
-    console.log('Play audio for:', mantra.title)
+
+    if ('speechSynthesis' in window) {
+      // Use the basic mantra text from the card
+      const utterance = new SpeechSynthesisUtterance(mantra.text)
+      utterance.lang = 'sa' // Default to Sanskrit
+      utterance.rate = 0.8 // Slightly slower for better pronunciation
+      speechSynthesis.speak(utterance)
+    } else {
+      alert('Text-to-speech is not supported in your browser')
+    }
   }
 
   return (

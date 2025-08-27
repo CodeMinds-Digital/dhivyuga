@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import {
   LayoutDashboard,
@@ -33,10 +34,12 @@ const navigation = [
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+  const { logout, user } = useAuth()
 
   const handleLogout = async () => {
-    // Add logout logic here
-    window.location.href = '/'
+    await logout()
+    router.push('/admin/login')
   }
 
   return (
@@ -57,11 +60,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200">
             <Link href="/admin" className="flex items-center gap-3">
               <div className="w-8 h-8 admin-gradient rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">D</span>
+                <span className="text-white font-bold text-sm">த</span>
               </div>
-              <span className="text-xl font-playfair font-bold admin-text-gradient">
-                Dhivyuga Admin
-              </span>
+              <div className="flex flex-col">
+                <span className="text-lg font-playfair font-bold admin-text-gradient leading-tight">
+                  திவ்யுகா
+                </span>
+                <span className="text-xs text-slate-500 leading-tight">Admin Panel</span>
+              </div>
             </Link>
             <button
               className="lg:hidden p-2 rounded-md text-slate-400 hover:text-slate-600"
@@ -103,15 +109,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <p className="text-xs text-slate-500 truncate">admin@dhivyuga.com</p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start gap-2 text-slate-600 hover:text-slate-900"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4" />
-              Sign out
-            </Button>
           </div>
         </div>
       </div>
@@ -145,6 +142,28 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <Link href="/" className="text-sm text-slate-600 hover:text-slate-900">
                 ← Back to site
               </Link>
+
+              {/* User Info */}
+              {user && (
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">
+                      {user.email?.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <span>{user.email}</span>
+                </div>
+              )}
+
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
         </div>

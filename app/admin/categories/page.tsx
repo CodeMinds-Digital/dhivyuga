@@ -9,15 +9,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Edit, Trash2, ArrowLeft, Tag } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Plus, Edit, Trash2, ArrowLeft, Tag, Eye, EyeOff } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { AuthGuard } from '@/components/admin/auth-guard'
 import Link from 'next/link'
 
 interface Category {
   id: string
   name: string
   description: string | null
+  is_active: boolean
   created_at: string
   mantra_count?: number
 }
@@ -25,6 +28,7 @@ interface Category {
 interface FormData {
   name: string
   description: string
+  is_active: boolean
 }
 
 export default function CategoryManagementPage() {
@@ -34,7 +38,8 @@ export default function CategoryManagementPage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [formData, setFormData] = useState<FormData>({
     name: '',
-    description: ''
+    description: '',
+    is_active: true
   })
 
   useEffect(() => {
@@ -90,7 +95,7 @@ export default function CategoryManagementPage() {
 
       setIsDialogOpen(false)
       setEditingCategory(null)
-      setFormData({ name: '', description: '' })
+      setFormData({ name: '', description: '', is_active: true })
       fetchCategories()
     } catch (error) {
       console.error('Error saving category:', error)
@@ -102,7 +107,8 @@ export default function CategoryManagementPage() {
     setEditingCategory(category)
     setFormData({
       name: category.name,
-      description: category.description || ''
+      description: category.description || '',
+      is_active: category.is_active
     })
     setIsDialogOpen(true)
   }
@@ -126,7 +132,7 @@ export default function CategoryManagementPage() {
 
   const openCreateDialog = () => {
     setEditingCategory(null)
-    setFormData({ name: '', description: '' })
+    setFormData({ name: '', description: '', is_active: true })
     setIsDialogOpen(true)
   }
 

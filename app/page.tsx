@@ -6,6 +6,7 @@ import { DeityGrid } from '@/components/deity-grid'
 import { CategoryGrid } from '@/components/category-grid'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SacredSymbolsBar } from '@/components/sacred-symbols-bar'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 
@@ -13,6 +14,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SacredSymbolsBar />
       <Header />
 
       <main className="flex-1">
@@ -40,9 +42,14 @@ export default function HomePage() {
               {/* Hero Content */}
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <h1 className="text-display-large bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 bg-clip-text text-transparent">
-                    Dhivyuga
-                  </h1>
+                  <div className="space-y-2">
+                    <h1 className="text-display-large bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 bg-clip-text text-transparent">
+                      திவ்யுகா
+                    </h1>
+                    <div className="text-xl text-zinc-600 font-medium">
+                      <span className="text-zinc-700">दिव्युगा</span> • <span className="text-zinc-600">Dhivyuga</span>
+                    </div>
+                  </div>
                   <p className="text-body-large text-zinc-600 max-w-2xl mx-auto">
                     Discover sacred mantras and planetary wisdom for spiritual growth, prosperity, and divine connection
                   </p>

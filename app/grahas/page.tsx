@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SacredSymbolsBar } from '@/components/sacred-symbols-bar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { LoadingGrid } from '@/components/ui/loading-spinner'
@@ -113,6 +114,7 @@ export default function GrahasPage() {
 
   return (
     <div className="min-h-screen flex flex-col surface">
+      <SacredSymbolsBar />
       <Header />
 
       <main className="flex-1">

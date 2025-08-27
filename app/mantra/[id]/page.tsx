@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SacredSymbolsBar } from '@/components/sacred-symbols-bar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -110,30 +111,81 @@ export default function MantraDetailPage() {
     }
   }
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (navigator.share && mantra) {
-      // Get meaning from the first available translation, or use a default description
-      const firstTranslation = mantra.translations?.[0]
-      const description = firstTranslation?.meaning
-        ? firstTranslation.meaning.replace(/<[^>]*>/g, '') // Remove HTML tags
-        : `${mantra.title} - Sacred mantra for spiritual practice`
+      try {
+        // Get meaning from the first available translation, or use a default description
+        const firstTranslation = mantra.translations?.[0]
+        const description = firstTranslation?.meaning
+          ? firstTranslation.meaning.replace(/<[^>]*>/g, '') // Remove HTML tags
+          : `${mantra.title} - Sacred mantra for spiritual practice`
 
-      navigator.share({
-        title: mantra.title,
-        text: description,
-        url: window.location.href
-      })
+        await navigator.share({
+          title: mantra.title,
+          text: description,
+          url: window.location.href
+        })
+      } catch (error) {
+        // Handle cancellation gracefully - don't show error for user cancellation
+        if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled the share - this is normal behavior, do nothing
+          return
+        }
+        // Only log other types of errors
+        console.error('Error sharing:', error)
+      }
     }
   }
 
+  const extractMantraText = (htmlText: string) => {
+    // Remove HTML tags
+    const withoutHtml = htmlText.replace(/<[^>]*>/g, ' ')
+
+    // Split by common separators and take the first line (usually the mantra)
+    const lines = withoutHtml.split(/[\n\r]+/).map(line => line.trim()).filter(line => line.length > 0)
+
+    // Look for the actual mantra text (usually the first substantial line)
+    const mantraLine = lines.find(line => line.length > 10) || lines[0] || withoutHtml
+
+    // Clean up extra whitespace
+    return mantraLine.replace(/\s+/g, ' ').trim()
+  }
+
   const handlePlay = () => {
-    // Future: Implement audio playback
-    console.log('Play audio for:', mantra?.title)
+    if (!mantra) return
+
+    if ('speechSynthesis' in window) {
+      // Try to get text from translations first (preferred)
+      if (mantra.translations && mantra.translations.length > 0) {
+        // Use Tamil translation first, then Sanskrit, then first available
+        const tamilTranslation = mantra.translations.find(t => t.languages?.code === 'ta')
+        const sanskritTranslation = mantra.translations.find(t => t.languages?.code === 'sa')
+        const firstTranslation = mantra.translations[0]
+
+        const selectedTranslation = tamilTranslation || sanskritTranslation || firstTranslation
+        const mantraText = extractMantraText(selectedTranslation.text)
+        const languageCode = selectedTranslation.languages?.code || 'ta'
+
+        const utterance = new SpeechSynthesisUtterance(mantraText)
+        utterance.lang = languageCode
+        utterance.rate = 0.8 // Slightly slower for better pronunciation
+        speechSynthesis.speak(utterance)
+      } else {
+        // Fallback to basic mantra text
+        const utterance = new SpeechSynthesisUtterance(mantra.text)
+        utterance.lang = 'sa' // Default to Sanskrit
+        utterance.rate = 0.8
+        speechSynthesis.speak(utterance)
+      }
+    } else {
+      alert('Text-to-speech is not supported in your browser')
+    }
   }
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col surface">
+        <SacredSymbolsBar />
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -146,6 +198,7 @@ export default function MantraDetailPage() {
   if (!mantra) {
     return (
       <div className="min-h-screen flex flex-col surface">
+        <SacredSymbolsBar />
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -160,6 +213,7 @@ export default function MantraDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col surface">
+      <SacredSymbolsBar />
       <Header />
 
       <main className="flex-1">

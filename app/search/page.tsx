@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SacredSymbolsBar } from '@/components/sacred-symbols-bar'
 import { SearchBar } from '@/components/search-bar'
 import { SearchFilters } from '@/components/search-filters'
 import { MantraCard } from '@/components/mantra-card'
@@ -81,6 +82,7 @@ function SearchPageContent() {
 
   return (
     <div className="min-h-screen flex flex-col surface">
+      <SacredSymbolsBar />
       <Header />
 
       <main className="flex-1">
@@ -230,6 +232,7 @@ export default function SearchPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex flex-col surface">
+        <SacredSymbolsBar />
         <Header />
         <main className="flex-1 py-8 px-4">
           <div className="max-w-6xl mx-auto">

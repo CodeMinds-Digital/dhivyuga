@@ -4,9 +4,18 @@ import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { Label } from '@/components/ui/label'
 
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
-import 'react-quill/dist/quill.snow.css'
+// Import ReactQuill New (React 18 compatible)
+const ReactQuill = dynamic(() => import('react-quill-new'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-32 bg-gray-50 border border-gray-300 rounded-md flex items-center justify-center">
+      <div className="text-gray-500">Loading editor...</div>
+    </div>
+  )
+})
+
+// Import styles
+import 'react-quill-new/dist/quill.snow.css'
 
 interface WysiwygEditorProps {
   value: string
@@ -20,21 +29,27 @@ interface WysiwygEditorProps {
 
 const WysiwygEditor = ({ value, onChange, placeholder, label, error, className = '', height = '200px' }: WysiwygEditorProps) => {
 
-  // Quill modules configuration
+  // Initialize Quill formats on component mount
+  useEffect(() => {
+    // This ensures Quill is properly initialized with all formats
+    if (typeof window !== 'undefined') {
+      import('react-quill-new').then(() => {
+        // Quill is now loaded and initialized
+      })
+    }
+  }, [])
+
+  // Quill modules configuration (React 18 compatible)
   const modules = {
     toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'font': [] }],
-      [{ 'size': ['small', false, 'large', 'huge'] }],
+      [{ 'header': [1, 2, 3, false] }], // Simplified header options
       ['bold', 'italic', 'underline', 'strike'],
       [{ 'color': [] }, { 'background': [] }],
-      [{ 'script': 'sub' }, { 'script': 'super' }],
       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
       [{ 'indent': '-1' }, { 'indent': '+1' }],
-      [{ 'direction': 'rtl' }],
       [{ 'align': [] }],
       ['blockquote', 'code-block'],
-      ['link', 'image', 'video'],
+      ['link'],
       ['clean']
     ],
     clipboard: {
@@ -42,17 +57,16 @@ const WysiwygEditor = ({ value, onChange, placeholder, label, error, className =
     }
   }
 
-  // Quill formats
+  // Quill formats (React 18 compatible)
   const formats = [
-    'header', 'font', 'size',
+    'header',
     'bold', 'italic', 'underline', 'strike',
     'color', 'background',
-    'script',
-    'list', 'bullet',
+    'list', // Includes both 'ordered' and 'bullet' as values
     'indent',
-    'direction', 'align',
+    'align',
     'blockquote', 'code-block',
-    'link', 'image', 'video'
+    'link'
   ]
 
   const handleChange = (content: string, delta: any, source: any, editor: any) => {

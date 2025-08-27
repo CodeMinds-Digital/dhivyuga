@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SacredSymbolsBar } from '@/components/sacred-symbols-bar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,6 +42,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col surface">
+      <SacredSymbolsBar />
       <Header />
 
       <main className="flex-1">

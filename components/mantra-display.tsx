@@ -69,10 +69,28 @@ export default function MantraDisplay({
     }
   }
 
+  const extractMantraText = (htmlText: string) => {
+    // Remove HTML tags
+    const withoutHtml = htmlText.replace(/<[^>]*>/g, ' ')
+
+    // Split by common separators and take the first line (usually the mantra)
+    const lines = withoutHtml.split(/[\n\r]+/).map(line => line.trim()).filter(line => line.length > 0)
+
+    // Look for the actual mantra text (usually the first substantial line)
+    // Skip very short lines that might be formatting
+    const mantraLine = lines.find(line => line.length > 10) || lines[0] || withoutHtml
+
+    // Clean up extra whitespace
+    return mantraLine.replace(/\s+/g, ' ').trim()
+  }
+
   const speakText = (text: string, languageCode: string) => {
     if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
+      // Extract only the mantra text, not instructions
+      const mantraOnly = extractMantraText(text)
+      const utterance = new SpeechSynthesisUtterance(mantraOnly)
       utterance.lang = languageCode
+      utterance.rate = 0.8 // Slightly slower for better pronunciation
       speechSynthesis.speak(utterance)
     }
   }
