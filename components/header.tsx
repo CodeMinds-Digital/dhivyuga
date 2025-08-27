@@ -25,12 +25,7 @@ export function Header() {
             }`}>
             Mantras
           </Link>
-          <Link href="/grahas" className={`px-4 py-2.5 rounded-lg transition-all font-medium text-label-large ${pathname === '/grahas' || pathname.startsWith('/graha')
-            ? 'bg-zinc-900 text-white shadow-sm'
-            : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
-            }`}>
-            Grahas
-          </Link>
+          {/* Grahas link hidden */}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -68,16 +63,7 @@ export function Header() {
             >
               Mantras
             </Link>
-            <Link
-              href="/grahas"
-              className={`block py-3 px-4 rounded-lg transition-all font-medium ${pathname === '/grahas' || pathname.startsWith('/graha')
-                ? 'bg-purple-100 text-purple-700 font-semibold'
-                : 'text-slate-700 hover:bg-purple-50 hover:text-purple-600'
-                }`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Grahas
-            </Link>
+            {/* Grahas link hidden from mobile menu */}
           </div>
         </div>
       )}
