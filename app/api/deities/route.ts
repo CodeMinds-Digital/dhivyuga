@@ -6,6 +6,7 @@ export async function GET() {
     const { data: deities, error } = await supabase
       .from('deities')
       .select('*')
+      .eq('is_active', true)  // Only return active deities
       .order('name')
 
     if (error) {

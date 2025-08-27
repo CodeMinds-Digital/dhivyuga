@@ -126,9 +126,49 @@ export default function MantraDetailPage() {
     }
   }
 
+  const extractMantraText = (htmlText: string) => {
+    // Remove HTML tags
+    const withoutHtml = htmlText.replace(/<[^>]*>/g, ' ')
+
+    // Split by common separators and take the first line (usually the mantra)
+    const lines = withoutHtml.split(/[\n\r]+/).map(line => line.trim()).filter(line => line.length > 0)
+
+    // Look for the actual mantra text (usually the first substantial line)
+    const mantraLine = lines.find(line => line.length > 10) || lines[0] || withoutHtml
+
+    // Clean up extra whitespace
+    return mantraLine.replace(/\s+/g, ' ').trim()
+  }
+
   const handlePlay = () => {
-    // Future: Implement audio playback
-    console.log('Play audio for:', mantra?.title)
+    if (!mantra) return
+
+    if ('speechSynthesis' in window) {
+      // Try to get text from translations first (preferred)
+      if (mantra.translations && mantra.translations.length > 0) {
+        // Use Tamil translation first, then Sanskrit, then first available
+        const tamilTranslation = mantra.translations.find(t => t.languages?.code === 'ta')
+        const sanskritTranslation = mantra.translations.find(t => t.languages?.code === 'sa')
+        const firstTranslation = mantra.translations[0]
+
+        const selectedTranslation = tamilTranslation || sanskritTranslation || firstTranslation
+        const mantraText = extractMantraText(selectedTranslation.text)
+        const languageCode = selectedTranslation.languages?.code || 'ta'
+
+        const utterance = new SpeechSynthesisUtterance(mantraText)
+        utterance.lang = languageCode
+        utterance.rate = 0.8 // Slightly slower for better pronunciation
+        speechSynthesis.speak(utterance)
+      } else {
+        // Fallback to basic mantra text
+        const utterance = new SpeechSynthesisUtterance(mantra.text)
+        utterance.lang = 'sa' // Default to Sanskrit
+        utterance.rate = 0.8
+        speechSynthesis.speak(utterance)
+      }
+    } else {
+      alert('Text-to-speech is not supported in your browser')
+    }
   }
 
   if (loading) {

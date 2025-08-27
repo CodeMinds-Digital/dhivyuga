@@ -3,9 +3,9 @@ import { supabase } from '@/lib/supabase'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const mantraId = params.id
+  const { id: mantraId } = await params
 
   try {
     const { data: translations, error } = await supabase
@@ -31,20 +31,20 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const mantraId = params.id
+  const { id: mantraId } = await params
 
   try {
     const body = await request.json()
-    const { 
-      language_id, 
-      text, 
-      transliteration, 
-      pronunciation_guide, 
-      meaning, 
-      benefits, 
-      usage_notes 
+    const {
+      language_id,
+      text,
+      transliteration,
+      pronunciation_guide,
+      meaning,
+      benefits,
+      usage_notes
     } = body
 
     if (!language_id || !text) {
@@ -83,21 +83,21 @@ export async function POST(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const mantraId = params.id
+  const { id: mantraId } = await params
 
   try {
     const body = await request.json()
-    const { 
+    const {
       translation_id,
-      language_id, 
-      text, 
-      transliteration, 
-      pronunciation_guide, 
-      meaning, 
-      benefits, 
-      usage_notes 
+      language_id,
+      text,
+      transliteration,
+      pronunciation_guide,
+      meaning,
+      benefits,
+      usage_notes
     } = body
 
     if (!translation_id || !language_id || !text) {
@@ -136,9 +136,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const mantraId = params.id
+  const { id: mantraId } = await params
   const url = new URL(request.url)
   const translationId = url.searchParams.get('translation_id')
 

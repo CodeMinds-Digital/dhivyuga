@@ -34,8 +34,16 @@ export function MantraCard({ mantra }: MantraCardProps) {
 
   const handlePlay = (e: React.MouseEvent) => {
     e.preventDefault()
-    // Future: Implement audio playback
-    console.log('Play audio for:', mantra.title)
+
+    if ('speechSynthesis' in window) {
+      // Use the basic mantra text from the card
+      const utterance = new SpeechSynthesisUtterance(mantra.text)
+      utterance.lang = 'sa' // Default to Sanskrit
+      utterance.rate = 0.8 // Slightly slower for better pronunciation
+      speechSynthesis.speak(utterance)
+    } else {
+      alert('Text-to-speech is not supported in your browser')
+    }
   }
 
   return (

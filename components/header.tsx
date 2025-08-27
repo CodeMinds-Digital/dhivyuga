@@ -15,7 +15,10 @@ export function Header() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-zinc-200/80 shadow-sm">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-title-large font-bold bg-gradient-to-r from-zinc-900 to-zinc-700 bg-clip-text text-transparent hover:from-zinc-800 hover:to-zinc-600 transition-all duration-200">
-          Dhivyuga
+          <div className="flex flex-col items-start">
+            <span className="text-lg leading-tight">திவ்யுகா</span>
+            <span className="text-xs text-zinc-500 font-normal leading-tight">दिव्युगा • Dhivyuga</span>
+          </div>
         </Link>
 
         <nav className="hidden md:flex items-center space-x-1">

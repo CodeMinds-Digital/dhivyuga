@@ -57,11 +57,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200">
             <Link href="/admin" className="flex items-center gap-3">
               <div className="w-8 h-8 admin-gradient rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">D</span>
+                <span className="text-white font-bold text-sm">த</span>
               </div>
-              <span className="text-xl font-playfair font-bold admin-text-gradient">
-                Dhivyuga Admin
-              </span>
+              <div className="flex flex-col">
+                <span className="text-lg font-playfair font-bold admin-text-gradient leading-tight">
+                  திவ்யுகா
+                </span>
+                <span className="text-xs text-slate-500 leading-tight">Admin Panel</span>
+              </div>
             </Link>
             <button
               className="lg:hidden p-2 rounded-md text-slate-400 hover:text-slate-600"

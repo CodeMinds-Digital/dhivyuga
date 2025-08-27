@@ -5,9 +5,9 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif' });
 
 export const metadata = {
-  title: 'Dhivyuga - Sacred Mantra Search Engine',
-  description: 'Discover and explore sacred mantras for spiritual growth, prosperity, and well-being',
-  keywords: 'mantras, spiritual, meditation, hinduism, sanskrit, devotion',
+  title: 'திவ்யுகா (Dhivyuga) - Sacred Mantra Search Engine',
+  description: 'திவ்யுகா - Discover and explore sacred mantras for spiritual growth, prosperity, and well-being. दिव्युगा - Divine mantras for spiritual seekers.',
+  keywords: 'mantras, spiritual, meditation, hinduism, sanskrit, devotion, திவ்யுகா, दिव्युगा, dhivyuga',
 };
 
 export default function RootLayout({

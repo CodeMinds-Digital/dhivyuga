@@ -3,9 +3,9 @@ import { supabase } from '@/lib/supabase'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const mantraId = params.id
+  const { id: mantraId } = await params
 
   try {
     const { data: mantra, error } = await supabase
