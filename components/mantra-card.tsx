@@ -21,14 +21,24 @@ interface MantraCardProps {
 
 export function MantraCard({ mantra }: MantraCardProps) {
 
-  const handleShare = (e: React.MouseEvent) => {
+  const handleShare = async (e: React.MouseEvent) => {
     e.preventDefault()
     if (navigator.share) {
-      navigator.share({
-        title: mantra.title,
-        text: mantra.text,
-        url: `${window.location.origin}/mantra/${mantra.id}`
-      })
+      try {
+        await navigator.share({
+          title: mantra.title,
+          text: mantra.text,
+          url: `${window.location.origin}/mantra/${mantra.id}`
+        })
+      } catch (error) {
+        // Handle cancellation gracefully - don't show error for user cancellation
+        if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled the share - this is normal behavior, do nothing
+          return
+        }
+        // Only log other types of errors
+        console.error('Error sharing:', error)
+      }
     }
   }
 

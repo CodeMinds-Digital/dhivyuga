@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SacredSymbolsBar } from '@/components/sacred-symbols-bar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -110,19 +111,29 @@ export default function MantraDetailPage() {
     }
   }
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (navigator.share && mantra) {
-      // Get meaning from the first available translation, or use a default description
-      const firstTranslation = mantra.translations?.[0]
-      const description = firstTranslation?.meaning
-        ? firstTranslation.meaning.replace(/<[^>]*>/g, '') // Remove HTML tags
-        : `${mantra.title} - Sacred mantra for spiritual practice`
+      try {
+        // Get meaning from the first available translation, or use a default description
+        const firstTranslation = mantra.translations?.[0]
+        const description = firstTranslation?.meaning
+          ? firstTranslation.meaning.replace(/<[^>]*>/g, '') // Remove HTML tags
+          : `${mantra.title} - Sacred mantra for spiritual practice`
 
-      navigator.share({
-        title: mantra.title,
-        text: description,
-        url: window.location.href
-      })
+        await navigator.share({
+          title: mantra.title,
+          text: description,
+          url: window.location.href
+        })
+      } catch (error) {
+        // Handle cancellation gracefully - don't show error for user cancellation
+        if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled the share - this is normal behavior, do nothing
+          return
+        }
+        // Only log other types of errors
+        console.error('Error sharing:', error)
+      }
     }
   }
 
@@ -174,6 +185,7 @@ export default function MantraDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col surface">
+        <SacredSymbolsBar />
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -186,6 +198,7 @@ export default function MantraDetailPage() {
   if (!mantra) {
     return (
       <div className="min-h-screen flex flex-col surface">
+        <SacredSymbolsBar />
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -200,6 +213,7 @@ export default function MantraDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col surface">
+      <SacredSymbolsBar />
       <Header />
 
       <main className="flex-1">

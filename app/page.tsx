@@ -6,6 +6,7 @@ import { DeityGrid } from '@/components/deity-grid'
 import { CategoryGrid } from '@/components/category-grid'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SacredSymbolsBar } from '@/components/sacred-symbols-bar'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 
@@ -13,6 +14,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SacredSymbolsBar />
       <Header />
 
       <main className="flex-1">

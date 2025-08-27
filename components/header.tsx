@@ -40,15 +40,7 @@ export function Header() {
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
 
-          <Link href="/admin">
-            <Button
-              variant="outline"
-              size="sm"
-              className="font-medium border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
-            >
-              Admin
-            </Button>
-          </Link>
+
         </div>
       </div>
 

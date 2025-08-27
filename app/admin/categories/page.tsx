@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch'
 import { Plus, Edit, Trash2, ArrowLeft, Tag, Eye, EyeOff } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { AdminLayout } from '@/components/admin/admin-layout'
+import { AuthGuard } from '@/components/admin/auth-guard'
 import Link from 'next/link'
 
 interface Category {
