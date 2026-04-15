@@ -1,10 +1,33 @@
 'use client'
 
-import { useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useState, useMemo } from 'react'
+import { useLocale } from 'next-intl'
 import { SacredTextBlock } from '@/components/sacred-text-block'
 import { DetailsGrid } from '@/components/details-grid'
 import { LanguageTabs } from '@/components/language-tabs'
+
+// All locale messages imported for tab-driven label switching in the overlay.
+// Bundle impact: ~8KB total (4 small JSON files). Acceptable tradeoff for
+// instant language switching without network requests when users click content tabs.
+import enMessages from '@/messages/en.json'
+import taMessages from '@/messages/ta.json'
+import hiMessages from '@/messages/hi.json'
+import saMessages from '@/messages/sa.json'
+
+const allMessages: Record<string, any> = {
+  en: enMessages,
+  ta: taMessages,
+  hi: hiMessages,
+  sa: saMessages,
+}
+
+function getLabel(lang: string, section: string, key: string): string {
+  try {
+    return allMessages[lang]?.[section]?.[key] || allMessages['en']?.[section]?.[key] || key
+  } catch {
+    return key
+  }
+}
 
 interface Translation {
   id: string
@@ -42,7 +65,7 @@ interface MantraContentProps {
 }
 
 export function MantraContent({ mantra }: MantraContentProps) {
-  const t = useTranslations('mantra')
+  const uiLocale = useLocale()
   const translations = mantra.translations || []
 
   const availableLanguages = translations
@@ -54,17 +77,37 @@ export function MantraContent({ mantra }: MantraContentProps) {
     }))
 
   const [activeLang, setActiveLang] = useState(
-    availableLanguages.find(l => l.code === 'ta')?.code || availableLanguages[0]?.code || ''
+    availableLanguages.find(l => l.code === uiLocale)?.code ||
+    availableLanguages.find(l => l.code === 'ta')?.code ||
+    availableLanguages[0]?.code || ''
   )
 
   const activeTranslation = translations.find(tr => tr.languages?.code === activeLang)
 
-  const bestTime = mantra.recitation_times
-    ? `${mantra.recitation_times.name}${mantra.time_ranges ? ` (${mantra.time_ranges.start_time} – ${mantra.time_ranges.end_time})` : ''}`
+  // All labels follow the active content tab language, not the URL locale
+  const label = useMemo(() => ({
+    deity: getLabel(activeLang, 'mantra', 'deity'),
+    bestTime: getLabel(activeLang, 'mantra', 'bestTime'),
+    recitationCount: getLabel(activeLang, 'mantra', 'recitationCount'),
+    auspiciousPeriod: getLabel(activeLang, 'mantra', 'auspiciousPeriod'),
+    meaning: getLabel(activeLang, 'mantra', 'meaning'),
+    benefits: getLabel(activeLang, 'mantra', 'benefits'),
+    howToChant: getLabel(activeLang, 'mantra', 'howToChant'),
+    views: getLabel(activeLang, 'search', 'views'),
+    times: getLabel(activeLang, 'search', 'times'),
+  }), [activeLang])
+
+  // Translate deity, category, and time names based on active tab
+  const deityName = mantra.deities?.name ? getLabel(activeLang, 'deities', mantra.deities.name) : undefined
+  const categoryName = mantra.categories?.name ? getLabel(activeLang, 'categories', mantra.categories.name) : undefined
+  const timeName = mantra.recitation_times?.name ? getLabel(activeLang, 'times', mantra.recitation_times.name) : undefined
+
+  const bestTime = timeName
+    ? `${timeName}${mantra.time_ranges ? ` (${mantra.time_ranges.start_time} – ${mantra.time_ranges.end_time})` : ''}`
     : undefined
 
   const recitationCount = mantra.recitation_counts
-    ? `${mantra.recitation_counts.count_value} times${mantra.recitation_counts.description ? ` (${mantra.recitation_counts.description})` : ''}`
+    ? `${mantra.recitation_counts.count_value} ${label.times}`
     : undefined
 
   let benefitsList: string[] = []
@@ -84,18 +127,18 @@ export function MantraContent({ mantra }: MantraContentProps) {
           {mantra.title}
         </h1>
         <div className="flex gap-2 justify-center flex-wrap">
-          {mantra.deities && (
+          {deityName && (
             <span className="text-xs font-medium px-3 py-1 rounded-full bg-brand-50 text-brand-700">
-              {mantra.deities.name}
+              {deityName}
             </span>
           )}
-          {mantra.categories && (
+          {categoryName && (
             <span className="text-xs font-medium px-3 py-1 rounded-full bg-blue-50 text-blue-700">
-              {mantra.categories.name}
+              {categoryName}
             </span>
           )}
           <span className="text-xs font-medium px-3 py-1 rounded-full bg-neutral-100 text-neutral-600">
-            {mantra.view_count} views
+            {mantra.view_count} {label.views}
           </span>
         </div>
       </div>
@@ -114,9 +157,13 @@ export function MantraContent({ mantra }: MantraContentProps) {
       />
 
       <DetailsGrid
-        deity={mantra.deities?.name}
+        deityLabel={label.deity}
+        deity={deityName}
+        bestTimeLabel={label.bestTime}
         bestTime={bestTime}
+        recitationCountLabel={label.recitationCount}
         recitationCount={recitationCount}
+        auspiciousPeriodLabel={label.auspiciousPeriod}
         auspiciousPeriod={mantra.kalams?.name}
         isAuspicious={mantra.kalams?.is_auspicious}
       />
@@ -124,7 +171,7 @@ export function MantraContent({ mantra }: MantraContentProps) {
       {activeTranslation?.meaning && (
         <section className="mb-6">
           <h2 className="text-sm font-bold text-neutral-900 uppercase tracking-wide pb-2 border-b border-neutral-100 mb-3">
-            {t('meaning')}
+            {label.meaning}
           </h2>
           <p className="text-sm text-neutral-700 leading-relaxed">{activeTranslation.meaning}</p>
         </section>
@@ -133,7 +180,7 @@ export function MantraContent({ mantra }: MantraContentProps) {
       {benefitsList.length > 0 && (
         <section className="mb-6">
           <h2 className="text-sm font-bold text-neutral-900 uppercase tracking-wide pb-2 border-b border-neutral-100 mb-3">
-            {t('benefits')}
+            {label.benefits}
           </h2>
           <ul className="flex flex-col gap-2">
             {benefitsList.map((benefit, i) => (
@@ -149,7 +196,7 @@ export function MantraContent({ mantra }: MantraContentProps) {
       {activeTranslation?.usage_notes && (
         <section className="mb-6">
           <h2 className="text-sm font-bold text-neutral-900 uppercase tracking-wide pb-2 border-b border-neutral-100 mb-3">
-            {t('howToChant')}
+            {label.howToChant}
           </h2>
           <p className="text-sm text-neutral-700 leading-relaxed">{activeTranslation.usage_notes}</p>
         </section>

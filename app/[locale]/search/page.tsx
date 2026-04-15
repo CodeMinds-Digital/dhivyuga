@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { SearchBar } from '@/components/search-bar'
@@ -44,20 +44,28 @@ function SearchPageContent() {
     try { return tTimes(name) } catch { return name }
   }
 
-  const fetchResults = useCallback(async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
-      if (query) params.set('q', query)
-      if (activeFilter) params.set('category', activeFilter)
-      const res = await fetch(`/api/search?${params.toString()}`)
-      const data = await res.json()
-      setMantras(data.mantras || [])
-    } catch {
-      setMantras([])
-    } finally {
-      setLoading(false)
+  // Fetch search results with cancellation
+  useEffect(() => {
+    const controller = new AbortController()
+
+    const fetchResults = async () => {
+      setLoading(true)
+      try {
+        const params = new URLSearchParams()
+        if (query) params.set('q', query)
+        if (activeFilter) params.set('category', activeFilter)
+        const res = await fetch(`/api/search?${params.toString()}`, { signal: controller.signal })
+        const data = await res.json()
+        setMantras(data.mantras || [])
+      } catch (e: any) {
+        if (e?.name !== 'AbortError') setMantras([])
+      } finally {
+        if (!controller.signal.aborted) setLoading(false)
+      }
     }
+
+    fetchResults()
+    return () => controller.abort()
   }, [query, activeFilter])
 
   useEffect(() => {
@@ -66,8 +74,6 @@ function SearchPageContent() {
       .then(d => setCategories(d.categories || []))
       .catch(() => {})
   }, [])
-
-  useEffect(() => { fetchResults() }, [fetchResults])
 
   useEffect(() => {
     if (mantraParam) {
