@@ -17,6 +17,15 @@ module.exports = {
     },
     extend: {
       colors: {
+        brand: {
+          50: '#FFF8F0', 100: '#FFEDD5', 200: '#FED7AA', 300: '#FDBA74',
+          400: '#FB923C', 500: '#F97316', 600: '#EA580C', 700: '#C2410C',
+          800: '#9A3412', 900: '#7C2D12',
+        },
+        sacred: {
+          gold: '#B8860B',
+          'gold-light': '#FEF9C3',
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -63,6 +72,8 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         display: ['DM Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        'noto-devanagari': ['"Noto Serif Devanagari"', 'serif'],
+        'noto-tamil': ['"Noto Sans Tamil"', 'sans-serif'],
       },
       fontSize: {
         'display-large': ['clamp(3.5rem, 8vw, 6rem)', { lineHeight: '1.1', letterSpacing: '-0.025em' }],
