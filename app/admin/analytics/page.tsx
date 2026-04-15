@@ -118,6 +118,13 @@ export default function AnalyticsPage() {
           <p className="text-slate-600">Insights into mantra usage and user engagement</p>
         </div>
 
+        {/* Sample Data Notice */}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-6">
+          <p className="text-sm text-amber-800">
+            <strong>Note:</strong> Category breakdown and recent activity data shown below are sample data. Real-time analytics will be available in a future update.
+          </p>
+        </div>
+
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="border-0 shadow-sm">

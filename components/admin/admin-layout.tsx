@@ -102,11 +102,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <div className="p-4 border-t border-slate-200">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-8 h-8 admin-gradient rounded-full flex items-center justify-center">
-                <span className="text-white font-medium text-sm">A</span>
+                <span className="text-white font-medium text-sm">{user?.email?.charAt(0).toUpperCase() || 'A'}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 truncate">Admin</p>
-                <p className="text-xs text-slate-500 truncate">admin@dhivyuga.com</p>
+                <p className="text-sm font-medium text-slate-900 truncate">{user?.email ? 'Admin' : 'Admin'}</p>
+                <p className="text-xs text-slate-500 truncate">{user?.email || 'Admin'}</p>
               </div>
             </div>
           </div>
