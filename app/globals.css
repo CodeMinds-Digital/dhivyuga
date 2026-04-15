@@ -3,11 +3,45 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
 
 @layer base {
 
   /* Modern Design System - Industry Best Practices 2024 */
   :root {
+    /* Brand Colors — Saffron & Sacred */
+    --brand-50: #FFF8F0;
+    --brand-100: #FFEDD5;
+    --brand-200: #FED7AA;
+    --brand-300: #FDBA74;
+    --brand-400: #FB923C;
+    --brand-500: #F97316;
+    --brand-600: #EA580C;
+    --brand-700: #C2410C;
+    --brand-800: #9A3412;
+    --brand-900: #7C2D12;
+
+    /* Neutral — Warm Stone */
+    --neutral-0: #FFFFFF;
+    --neutral-50: #FAFAF9;
+    --neutral-100: #F5F5F4;
+    --neutral-200: #E7E5E4;
+    --neutral-300: #D6D3D1;
+    --neutral-400: #A8A29E;
+    --neutral-500: #78716C;
+    --neutral-600: #57534E;
+    --neutral-700: #44403C;
+    --neutral-800: #292524;
+    --neutral-900: #1C1917;
+
+    /* Semantic */
+    --sacred-gold: #B8860B;
+    --sacred-gold-light: #FEF9C3;
+
+    /* Shadows */
+    --shadow-search: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+    --shadow-search-focus: 0 4px 16px rgba(249,115,22,0.12), 0 0 0 2px rgba(249,115,22,0.2);
+
     /* Base Colors - Pure & Clean */
     --background: 255 255 255;
     --foreground: 9 9 11;
@@ -39,8 +73,8 @@
     /* Zinc 300 */
 
     /* Primary System - Professional Blue */
-    --primary: 37 99 235;
-    /* Blue 600 - Trustworthy */
+    --primary: 249 115 22;
+    /* Brand Saffron */
     --primary-foreground: 255 255 255;
     --primary-container: 219 234 254;
     /* Blue 100 */
