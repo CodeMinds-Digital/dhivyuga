@@ -88,8 +88,8 @@ export async function GET(
       const sliced = allRelatedDocs.slice(0, 4)
 
       // Batch-fetch all deity and category IDs at once
-      const relDeityIds = [...new Set(sliced.map(d => d.deity_id).filter(Boolean))]
-      const relCatIds = [...new Set(sliced.map(d => d.category_id).filter(Boolean))]
+      const relDeityIds = Array.from(new Set(sliced.map(d => d.deity_id).filter(Boolean)))
+      const relCatIds = Array.from(new Set(sliced.map(d => d.category_id).filter(Boolean)))
       const [relDeitiesMap, relCatsMap] = await Promise.all([
         fetchDocMap(COLLECTIONS.DEITIES, relDeityIds),
         fetchDocMap(COLLECTIONS.CATEGORIES, relCatIds),
