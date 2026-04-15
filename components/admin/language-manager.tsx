@@ -46,30 +46,21 @@ export default function LanguageManager({
   const [translations, setTranslations] = useState<Translation[]>(initialTranslations)
   const [activeLanguage, setActiveLanguage] = useState<string>('')
 
-  // Set active language when languages load
-  useEffect(() => {
-    if (languages.length > 0 && !activeLanguage) {
-      // Default to Tamil if available, otherwise first language
-      const defaultLang = languages.find(l => l.code === 'ta') || languages[0]
-      setActiveLanguage(defaultLang?.$id || '')
-    }
-  }, [languages, activeLanguage])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+
+  // Set active language when languages load (consolidated from two duplicate useEffects)
+  useEffect(() => {
+    if (languages.length > 0 && !activeLanguage) {
+      const tamil = languages.find(l => l.code === 'ta')
+      const firstActive = languages.find(l => l.is_active)
+      setActiveLanguage(tamil?.code || firstActive?.code || languages[0].code)
+    }
+  }, [languages, activeLanguage])
 
   useEffect(() => {
     fetchLanguages()
   }, [])
-
-  useEffect(() => {
-    if (languages.length > 0 && !activeLanguage) {
-      // Set first active language as default
-      const firstActive = languages.find(l => l.is_active)
-      if (firstActive) {
-        setActiveLanguage(firstActive.$id)
-      }
-    }
-  }, [languages, activeLanguage])
 
   const fetchLanguages = async () => {
     try {

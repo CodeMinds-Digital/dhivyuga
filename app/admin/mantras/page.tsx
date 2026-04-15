@@ -83,24 +83,45 @@ export default function MantraManagementPage() {
         databases.listDocuments(DATABASE_ID, COLLECTIONS.RECITATION_TIMES, [Query.orderAsc('name'), Query.limit(100)])
       ])
 
-      // Resolve related documents for each mantra
-      const mantrasWithRelations = await Promise.all(
-        mantrasRes.documents.map(async (mantra: any) => {
-          const [deity, category, count, time] = await Promise.all([
-            getRelatedDoc(COLLECTIONS.DEITIES, mantra.deity_id),
-            getRelatedDoc(COLLECTIONS.CATEGORIES, mantra.category_id),
-            getRelatedDoc(COLLECTIONS.RECITATION_COUNTS, mantra.count_id),
-            getRelatedDoc(COLLECTIONS.RECITATION_TIMES, mantra.time_id)
-          ])
-          return {
-            ...mantra,
-            deities: deity ? { $id: deity.$id, name: deity.name } : null,
-            categories: category ? { $id: category.$id, name: category.name } : null,
-            recitation_counts: count ? { $id: count.$id, count_value: count.count_value } : null,
-            recitation_times: time ? { $id: time.$id, name: time.name } : null
-          }
-        })
-      )
+      // Batch-fetch related documents to avoid N+1 queries
+      const mantrasDocs = mantrasRes.documents
+
+      const deityIds = Array.from(new Set(mantrasDocs.map((d: any) => d.deity_id).filter(Boolean)))
+      const categoryIds = Array.from(new Set(mantrasDocs.map((d: any) => d.category_id).filter(Boolean)))
+      const countIds = Array.from(new Set(mantrasDocs.map((d: any) => d.count_id).filter(Boolean)))
+      const timeIds = Array.from(new Set(mantrasDocs.map((d: any) => d.time_id).filter(Boolean)))
+
+      const [deityDocs, categoryDocs, countDocs, timeDocs] = await Promise.all([
+        Promise.all(deityIds.map(id => getRelatedDoc(COLLECTIONS.DEITIES, id))),
+        Promise.all(categoryIds.map(id => getRelatedDoc(COLLECTIONS.CATEGORIES, id))),
+        Promise.all(countIds.map(id => getRelatedDoc(COLLECTIONS.RECITATION_COUNTS, id))),
+        Promise.all(timeIds.map(id => getRelatedDoc(COLLECTIONS.RECITATION_TIMES, id))),
+      ])
+
+      const deityMap: Record<string, any> = {}
+      deityIds.forEach((id, i) => { if (deityDocs[i]) deityMap[id] = deityDocs[i] })
+      const categoryMap: Record<string, any> = {}
+      categoryIds.forEach((id, i) => { if (categoryDocs[i]) categoryMap[id] = categoryDocs[i] })
+      const countMap: Record<string, any> = {}
+      countIds.forEach((id, i) => { if (countDocs[i]) countMap[id] = countDocs[i] })
+      const timeMap: Record<string, any> = {}
+      timeIds.forEach((id, i) => { if (timeDocs[i]) timeMap[id] = timeDocs[i] })
+
+      const mantrasWithRelations = mantrasDocs.map((d: any) => ({
+        $id: d.$id,
+        title: d.title,
+        text: d.text,
+        view_count: d.view_count,
+        $createdAt: d.$createdAt,
+        deity_id: d.deity_id,
+        category_id: d.category_id,
+        count_id: d.count_id,
+        time_id: d.time_id,
+        deities: d.deity_id ? deityMap[d.deity_id] || null : null,
+        categories: d.category_id ? categoryMap[d.category_id] || null : null,
+        recitation_counts: d.count_id ? countMap[d.count_id] || null : null,
+        recitation_times: d.time_id ? timeMap[d.time_id] || null : null,
+      }))
 
       setMantras(mantrasWithRelations)
       setDeities(deitiesRes.documents)
