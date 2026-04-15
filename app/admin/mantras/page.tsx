@@ -52,6 +52,7 @@ export default function MantraManagementPage() {
   const [loading, setLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingMantra, setEditingMantra] = useState<Mantra | null>(null)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState<FormData>({
     title: '',
     text: '',
@@ -137,6 +138,7 @@ export default function MantraManagementPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
 
     try {
       if (editingMantra) {
@@ -170,7 +172,7 @@ export default function MantraManagementPage() {
       fetchData()
     } catch (error) {
       console.error('Error saving mantra:', error)
-      alert('Error saving mantra. Please try again.')
+      setError('Error saving mantra. Please try again.')
     }
   }
 
@@ -195,12 +197,13 @@ export default function MantraManagementPage() {
       fetchData()
     } catch (error) {
       console.error('Error deleting mantra:', error)
-      alert('Error deleting mantra. Please try again.')
+      setError('Error deleting mantra. Please try again.')
     }
   }
 
   const openCreateDialog = () => {
     setEditingMantra(null)
+    setError('')
     setFormData({
       title: '',
       text: '',
@@ -225,6 +228,11 @@ export default function MantraManagementPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+              <p className="text-sm text-red-800">{error}</p>
+            </div>
+          )}
           {/* Header with Add Button */}
           <div className="flex items-center justify-between">
             <div>
@@ -265,6 +273,11 @@ export default function MantraManagementPage() {
                   </TabsList>
 
                   <TabsContent value="basic" className="space-y-4 mt-6">
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
+                        <p className="text-sm text-red-800">{error}</p>
+                      </div>
+                    )}
                     <form onSubmit={handleSubmit} className="space-y-4">
                       <div>
                         <Label className="text-sm font-medium">Title</Label>

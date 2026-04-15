@@ -34,6 +34,7 @@ export default function DeityManagementPage() {
   const [loading, setLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingDeity, setEditingDeity] = useState<Deity | null>(null)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState<FormData>({
     name: '',
     description: '',
@@ -97,12 +98,13 @@ export default function DeityManagementPage() {
       ))
     } catch (error) {
       console.error('Error toggling deity status:', error)
-      alert('Failed to update deity status')
+      setError('Failed to update deity status')
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
 
     try {
       if (editingDeity) {
@@ -129,7 +131,7 @@ export default function DeityManagementPage() {
       fetchDeities()
     } catch (error) {
       console.error('Error saving deity:', error)
-      alert('Error saving deity. Please try again.')
+      setError('Error saving deity. Please try again.')
     }
   }
 
@@ -151,12 +153,13 @@ export default function DeityManagementPage() {
       fetchDeities()
     } catch (error) {
       console.error('Error deleting deity:', error)
-      alert('Error deleting deity. Please try again.')
+      setError('Error deleting deity. Please try again.')
     }
   }
 
   const openCreateDialog = () => {
     setEditingDeity(null)
+    setError('')
     setFormData({ name: '', description: '', is_active: true })
     setIsDialogOpen(true)
   }
@@ -174,6 +177,11 @@ export default function DeityManagementPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
         {/* Header with Add Button */}
         <div className="flex items-center justify-between">
           <div>
@@ -195,6 +203,11 @@ export default function DeityManagementPage() {
                 </DialogTitle>
               </DialogHeader>
 
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Name</label>

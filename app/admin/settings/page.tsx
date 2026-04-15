@@ -67,6 +67,7 @@ export default function SettingsManagementPage() {
   const [activeTab, setActiveTab] = useState('times')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<EditingItem>(null)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState<FormData>({})
 
   useEffect(() => {
@@ -106,6 +107,7 @@ export default function SettingsManagementPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
 
     try {
       const collectionId = getCollectionId(activeTab)
@@ -132,7 +134,7 @@ export default function SettingsManagementPage() {
       fetchAllData()
     } catch (error) {
       console.error('Error saving item:', error)
-      alert('Error saving item. Please try again.')
+      setError('Error saving item. Please try again.')
     }
   }
 
@@ -153,12 +155,13 @@ export default function SettingsManagementPage() {
       fetchAllData()
     } catch (error) {
       console.error('Error deleting item:', error)
-      alert('Error deleting item. Please try again.')
+      setError('Error deleting item. Please try again.')
     }
   }
 
   const openCreateDialog = () => {
     setEditingItem(null)
+    setError('')
     setFormData({})
     setIsDialogOpen(true)
   }
@@ -299,6 +302,11 @@ export default function SettingsManagementPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
         {/* Header with Add Button */}
         <div className="flex items-center justify-between">
           <div>
@@ -320,6 +328,11 @@ export default function SettingsManagementPage() {
                 </DialogTitle>
               </DialogHeader>
 
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-4">
                 {renderForm()}
                 <div className="flex justify-end gap-2 pt-4">

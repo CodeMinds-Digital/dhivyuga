@@ -35,6 +35,7 @@ export default function CategoryManagementPage() {
   const [loading, setLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState<FormData>({
     name: '',
     description: '',
@@ -85,6 +86,7 @@ export default function CategoryManagementPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
 
     try {
       if (editingCategory) {
@@ -111,7 +113,7 @@ export default function CategoryManagementPage() {
       fetchCategories()
     } catch (error) {
       console.error('Error saving category:', error)
-      alert('Error saving category. Please try again.')
+      setError('Error saving category. Please try again.')
     }
   }
 
@@ -133,12 +135,13 @@ export default function CategoryManagementPage() {
       fetchCategories()
     } catch (error) {
       console.error('Error deleting category:', error)
-      alert('Error deleting category. Please try again.')
+      setError('Error deleting category. Please try again.')
     }
   }
 
   const openCreateDialog = () => {
     setEditingCategory(null)
+    setError('')
     setFormData({ name: '', description: '', is_active: true })
     setIsDialogOpen(true)
   }
@@ -156,6 +159,11 @@ export default function CategoryManagementPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
         {/* Header with Add Button */}
         <div className="flex items-center justify-between">
           <div>
@@ -177,6 +185,11 @@ export default function CategoryManagementPage() {
                 </DialogTitle>
               </DialogHeader>
 
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Name</label>
