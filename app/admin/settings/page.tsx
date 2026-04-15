@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { databases, DATABASE_ID, COLLECTIONS, Query, ID } from '@/lib/appwrite'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -16,45 +16,43 @@ import { AdminLayout } from '@/components/admin/admin-layout'
 import Link from 'next/link'
 
 interface RecitationTime {
-  id: string
+  $id: string
   name: string
   description: string | null
-  created_at: string
+  $createdAt: string
 }
 
 interface RecitationCount {
-  id: string
+  $id: string
   count_value: number
   description: string | null
-  created_at: string
+  $createdAt: string
 }
 
 interface Kalam {
-  id: string
+  $id: string
   name: string
   description: string | null
   is_auspicious: boolean
-  created_at: string
+  $createdAt: string
 }
 
 interface TimeRange {
-  id: string
+  $id: string
   start_time: string
   end_time: string
   description: string | null
-  created_at: string
+  $createdAt: string
 }
 
 // Combined type for form data that includes all possible properties
 interface FormData {
-  id?: string
   name?: string
   description?: string | null
   count_value?: number
   is_auspicious?: boolean
   start_time?: string
   end_time?: string
-  created_at?: string
 }
 
 // Union type for editing items
@@ -79,16 +77,16 @@ export default function SettingsManagementPage() {
     setLoading(true)
     try {
       const [timesRes, countsRes, kalamsRes, rangesRes] = await Promise.all([
-        supabase.from('recitation_times').select('*').order('name'),
-        supabase.from('recitation_counts').select('*').order('count_value'),
-        supabase.from('kalams').select('*').order('name'),
-        supabase.from('time_ranges').select('*').order('start_time')
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.RECITATION_TIMES, [Query.orderAsc('name'), Query.limit(100)]),
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.RECITATION_COUNTS, [Query.orderAsc('count_value'), Query.limit(100)]),
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.KALAMS, [Query.orderAsc('name'), Query.limit(100)]),
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.TIME_RANGES, [Query.orderAsc('start_time'), Query.limit(100)])
       ])
 
-      setRecitationTimes(timesRes.data || [])
-      setRecitationCounts(countsRes.data || [])
-      setKalams(kalamsRes.data || [])
-      setTimeRanges(rangesRes.data || [])
+      setRecitationTimes(timesRes.documents as any)
+      setRecitationCounts(countsRes.documents as any)
+      setKalams(kalamsRes.documents as any)
+      setTimeRanges(rangesRes.documents as any)
     } catch (error) {
       console.error('Error fetching data:', error)
     } finally {
@@ -96,25 +94,36 @@ export default function SettingsManagementPage() {
     }
   }
 
+  const getCollectionId = (tab: string) => {
+    switch (tab) {
+      case 'times': return COLLECTIONS.RECITATION_TIMES
+      case 'counts': return COLLECTIONS.RECITATION_COUNTS
+      case 'kalams': return COLLECTIONS.KALAMS
+      case 'ranges': return COLLECTIONS.TIME_RANGES
+      default: return COLLECTIONS.RECITATION_TIMES
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     try {
-      const tableName = getTableName(activeTab)
+      const collectionId = getCollectionId(activeTab)
 
       if (editingItem) {
-        const { error } = await supabase
-          .from(tableName)
-          .update(formData)
-          .eq('id', editingItem.id)
-
-        if (error) throw error
+        await databases.updateDocument(
+          DATABASE_ID,
+          collectionId,
+          editingItem.$id,
+          formData
+        )
       } else {
-        const { error } = await supabase
-          .from(tableName)
-          .insert([formData])
-
-        if (error) throw error
+        await databases.createDocument(
+          DATABASE_ID,
+          collectionId,
+          ID.unique(),
+          formData
+        )
       }
 
       setIsDialogOpen(false)
@@ -129,7 +138,9 @@ export default function SettingsManagementPage() {
 
   const handleEdit = (item: any) => {
     setEditingItem(item)
-    setFormData({ ...item })
+    // Extract only the data fields, not Appwrite metadata
+    const { $id, $createdAt, $updatedAt, $permissions, $databaseId, $collectionId, ...data } = item
+    setFormData(data)
     setIsDialogOpen(true)
   }
 
@@ -137,27 +148,12 @@ export default function SettingsManagementPage() {
     if (!confirm('Are you sure you want to delete this item?')) return
 
     try {
-      const tableName = getTableName(activeTab)
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
+      const collectionId = getCollectionId(activeTab)
+      await databases.deleteDocument(DATABASE_ID, collectionId, id)
       fetchAllData()
     } catch (error) {
       console.error('Error deleting item:', error)
       alert('Error deleting item. Please try again.')
-    }
-  }
-
-  const getTableName = (tab: string) => {
-    switch (tab) {
-      case 'times': return 'recitation_times'
-      case 'counts': return 'recitation_counts'
-      case 'kalams': return 'kalams'
-      case 'ranges': return 'time_ranges'
-      default: return 'recitation_times'
     }
   }
 
@@ -389,10 +385,10 @@ export default function SettingsManagementPage() {
                   </TableHeader>
                   <TableBody>
                     {recitationTimes.map((time) => (
-                      <TableRow key={time.id}>
+                      <TableRow key={time.$id}>
                         <TableCell className="font-medium">{time.name}</TableCell>
                         <TableCell>{time.description || '-'}</TableCell>
-                        <TableCell>{new Date(time.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</TableCell>
+                        <TableCell>{new Date(time.$createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button size="sm" variant="ghost" onClick={() => handleEdit(time)}>
@@ -401,7 +397,7 @@ export default function SettingsManagementPage() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => handleDelete(time.id)}
+                              onClick={() => handleDelete(time.$id)}
                               className="text-red-600 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -433,10 +429,10 @@ export default function SettingsManagementPage() {
                   </TableHeader>
                   <TableBody>
                     {recitationCounts.map((count) => (
-                      <TableRow key={count.id}>
+                      <TableRow key={count.$id}>
                         <TableCell className="font-medium">{count.count_value}</TableCell>
                         <TableCell>{count.description || '-'}</TableCell>
-                        <TableCell>{new Date(count.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</TableCell>
+                        <TableCell>{new Date(count.$createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button size="sm" variant="ghost" onClick={() => handleEdit(count)}>
@@ -445,7 +441,7 @@ export default function SettingsManagementPage() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => handleDelete(count.id)}
+                              onClick={() => handleDelete(count.$id)}
                               className="text-red-600 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -478,7 +474,7 @@ export default function SettingsManagementPage() {
                   </TableHeader>
                   <TableBody>
                     {kalams.map((kalam) => (
-                      <TableRow key={kalam.id}>
+                      <TableRow key={kalam.$id}>
                         <TableCell className="font-medium">{kalam.name}</TableCell>
                         <TableCell>
                           <Badge variant={kalam.is_auspicious ? "success" : "secondary"}>
@@ -486,7 +482,7 @@ export default function SettingsManagementPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>{kalam.description || '-'}</TableCell>
-                        <TableCell>{new Date(kalam.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</TableCell>
+                        <TableCell>{new Date(kalam.$createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button size="sm" variant="ghost" onClick={() => handleEdit(kalam)}>
@@ -495,7 +491,7 @@ export default function SettingsManagementPage() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => handleDelete(kalam.id)}
+                              onClick={() => handleDelete(kalam.$id)}
                               className="text-red-600 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -527,12 +523,12 @@ export default function SettingsManagementPage() {
                   </TableHeader>
                   <TableBody>
                     {timeRanges.map((range) => (
-                      <TableRow key={range.id}>
+                      <TableRow key={range.$id}>
                         <TableCell className="font-medium">
                           {range.start_time} - {range.end_time}
                         </TableCell>
                         <TableCell>{range.description || '-'}</TableCell>
-                        <TableCell>{new Date(range.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</TableCell>
+                        <TableCell>{new Date(range.$createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button size="sm" variant="ghost" onClick={() => handleEdit(range)}>
@@ -541,7 +537,7 @@ export default function SettingsManagementPage() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => handleDelete(range.id)}
+                              onClick={() => handleDelete(range.$id)}
                               className="text-red-600 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4" />

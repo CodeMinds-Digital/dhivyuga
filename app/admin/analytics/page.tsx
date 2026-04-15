@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { databases, DATABASE_ID, COLLECTIONS, Query } from '@/lib/appwrite'
 import { AdminLayout } from '@/components/admin/admin-layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -20,7 +20,7 @@ interface AnalyticsData {
   totalViews: number
   totalMantras: number
   popularMantras: Array<{
-    id: string
+    $id: string
     title: string
     view_count: number
   }>
@@ -52,26 +52,31 @@ export default function AnalyticsPage() {
   const fetchAnalytics = async () => {
     setLoading(true)
     try {
-      // Fetch basic stats
-      const [mantrasRes, viewsRes] = await Promise.all([
-        supabase.from('mantras').select('id, view_count'),
-        supabase.from('mantras').select('view_count')
-      ])
+      // Fetch all mantras for stats
+      const mantrasRes = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.MANTRAS,
+        [Query.limit(5000)]
+      )
 
-      const totalViews = mantrasRes.data?.reduce((sum, mantra) => sum + (mantra.view_count || 0), 0) || 0
-      const totalMantras = mantrasRes.data?.length || 0
+      const totalViews = mantrasRes.documents.reduce((sum, mantra) => sum + (mantra.view_count || 0), 0)
+      const totalMantras = mantrasRes.total
 
-      // Fetch popular mantras
-      const { data: popularMantras } = await supabase
-        .from('mantras')
-        .select('id, title, view_count')
-        .order('view_count', { ascending: false })
-        .limit(5)
+      // Fetch popular mantras (sorted by view_count descending, limit 5)
+      const popularRes = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.MANTRAS,
+        [Query.orderDesc('view_count'), Query.limit(5)]
+      )
 
       setAnalytics({
         totalViews,
         totalMantras,
-        popularMantras: popularMantras || [],
+        popularMantras: popularRes.documents.map((d: any) => ({
+          $id: d.$id,
+          title: d.title,
+          view_count: d.view_count || 0
+        })),
         viewsByCategory: [
           { category: 'Prosperity', views: Math.floor(totalViews * 0.3) },
           { category: 'Protection', views: Math.floor(totalViews * 0.25) },
@@ -187,7 +192,7 @@ export default function AnalyticsPage() {
             <CardContent>
               <div className="space-y-4">
                 {analytics.popularMantras.map((mantra, index) => (
-                  <div key={mantra.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div key={mantra.$id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                         <span className="text-sm font-bold text-purple-600">#{index + 1}</span>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { databases, DATABASE_ID, COLLECTIONS, Query, ID, getRelatedDoc } from '@/lib/appwrite'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -20,15 +20,19 @@ import LanguageManager from '@/components/admin/language-manager'
 import Link from 'next/link'
 
 interface Mantra {
-  id: string
+  $id: string
   title: string
   text: string
   view_count: number
-  created_at: string
-  deities?: { id: string; name: string }
-  categories?: { id: string; name: string }
-  recitation_counts?: { id: string; count_value: number }
-  recitation_times?: { id: string; name: string }
+  $createdAt: string
+  deity_id?: string
+  category_id?: string
+  count_id?: string
+  time_id?: string
+  deities?: { $id: string; name: string } | null
+  categories?: { $id: string; name: string } | null
+  recitation_counts?: { $id: string; count_value: number } | null
+  recitation_times?: { $id: string; name: string } | null
 }
 
 interface FormData {
@@ -65,31 +69,45 @@ export default function MantraManagementPage() {
   const fetchData = async () => {
     setLoading(true)
     try {
-      // Fetch mantras with related data
-      const { data: mantrasData } = await supabase
-        .from('mantras')
-        .select(`
-          *,
-          deities(id, name),
-          categories(id, name),
-          recitation_counts(id, count_value),
-          recitation_times(id, name)
-        `)
-        .order('created_at', { ascending: false })
+      // Fetch mantras
+      const mantrasRes = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.MANTRAS,
+        [Query.orderDesc('$createdAt'), Query.limit(100)]
+      )
 
-      // Fetch dropdown options
+      // Fetch dropdown options in parallel
       const [deitiesRes, categoriesRes, countsRes, timesRes] = await Promise.all([
-        supabase.from('deities').select('*').order('name'),
-        supabase.from('categories').select('*').order('name'),
-        supabase.from('recitation_counts').select('*').order('count_value'),
-        supabase.from('recitation_times').select('*').order('name')
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.DEITIES, [Query.orderAsc('name'), Query.limit(100)]),
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.CATEGORIES, [Query.orderAsc('name'), Query.limit(100)]),
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.RECITATION_COUNTS, [Query.orderAsc('count_value'), Query.limit(100)]),
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.RECITATION_TIMES, [Query.orderAsc('name'), Query.limit(100)])
       ])
 
-      setMantras(mantrasData || [])
-      setDeities(deitiesRes.data || [])
-      setCategories(categoriesRes.data || [])
-      setRecitationCounts(countsRes.data || [])
-      setRecitationTimes(timesRes.data || [])
+      // Resolve related documents for each mantra
+      const mantrasWithRelations = await Promise.all(
+        mantrasRes.documents.map(async (mantra: any) => {
+          const [deity, category, count, time] = await Promise.all([
+            getRelatedDoc(COLLECTIONS.DEITIES, mantra.deity_id),
+            getRelatedDoc(COLLECTIONS.CATEGORIES, mantra.category_id),
+            getRelatedDoc(COLLECTIONS.RECITATION_COUNTS, mantra.count_id),
+            getRelatedDoc(COLLECTIONS.RECITATION_TIMES, mantra.time_id)
+          ])
+          return {
+            ...mantra,
+            deities: deity ? { $id: deity.$id, name: deity.name } : null,
+            categories: category ? { $id: category.$id, name: category.name } : null,
+            recitation_counts: count ? { $id: count.$id, count_value: count.count_value } : null,
+            recitation_times: time ? { $id: time.$id, name: time.name } : null
+          }
+        })
+      )
+
+      setMantras(mantrasWithRelations)
+      setDeities(deitiesRes.documents)
+      setCategories(categoriesRes.documents)
+      setRecitationCounts(countsRes.documents)
+      setRecitationTimes(timesRes.documents)
     } catch (error) {
       console.error('Error fetching data:', error)
     } finally {
@@ -103,19 +121,20 @@ export default function MantraManagementPage() {
     try {
       if (editingMantra) {
         // Update existing mantra
-        const { error } = await supabase
-          .from('mantras')
-          .update(formData)
-          .eq('id', editingMantra.id)
-
-        if (error) throw error
+        await databases.updateDocument(
+          DATABASE_ID,
+          COLLECTIONS.MANTRAS,
+          editingMantra.$id,
+          formData
+        )
       } else {
         // Create new mantra
-        const { error } = await supabase
-          .from('mantras')
-          .insert([formData])
-
-        if (error) throw error
+        await databases.createDocument(
+          DATABASE_ID,
+          COLLECTIONS.MANTRAS,
+          ID.unique(),
+          formData
+        )
       }
 
       setIsDialogOpen(false)
@@ -140,10 +159,10 @@ export default function MantraManagementPage() {
     setFormData({
       title: mantra.title,
       text: mantra.text,
-      deity_id: mantra.deities?.id || '',
-      category_id: mantra.categories?.id || '',
-      count_id: mantra.recitation_counts?.id || '',
-      time_id: mantra.recitation_times?.id || ''
+      deity_id: mantra.deities?.$id || mantra.deity_id || '',
+      category_id: mantra.categories?.$id || mantra.category_id || '',
+      count_id: mantra.recitation_counts?.$id || mantra.count_id || '',
+      time_id: mantra.recitation_times?.$id || mantra.time_id || ''
     })
     setIsDialogOpen(true)
   }
@@ -152,12 +171,7 @@ export default function MantraManagementPage() {
     if (!confirm('Are you sure you want to delete this mantra?')) return
 
     try {
-      const { error } = await supabase
-        .from('mantras')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
+      await databases.deleteDocument(DATABASE_ID, COLLECTIONS.MANTRAS, id)
       fetchData()
     } catch (error) {
       console.error('Error deleting mantra:', error)
@@ -267,7 +281,7 @@ export default function MantraManagementPage() {
                             </SelectTrigger>
                             <SelectContent>
                               {deities.map((deity) => (
-                                <SelectItem key={deity.id} value={deity.id}>
+                                <SelectItem key={deity.$id} value={deity.$id}>
                                   {deity.name}
                                 </SelectItem>
                               ))}
@@ -283,7 +297,7 @@ export default function MantraManagementPage() {
                             </SelectTrigger>
                             <SelectContent>
                               {categories.map((category) => (
-                                <SelectItem key={category.id} value={category.id}>
+                                <SelectItem key={category.$id} value={category.$id}>
                                   {category.name}
                                 </SelectItem>
                               ))}
@@ -301,7 +315,7 @@ export default function MantraManagementPage() {
                             </SelectTrigger>
                             <SelectContent>
                               {recitationCounts.map((count) => (
-                                <SelectItem key={count.id} value={count.id}>
+                                <SelectItem key={count.$id} value={count.$id}>
                                   {count.count_value} times
                                 </SelectItem>
                               ))}
@@ -317,7 +331,7 @@ export default function MantraManagementPage() {
                             </SelectTrigger>
                             <SelectContent>
                               {recitationTimes.map((time) => (
-                                <SelectItem key={time.id} value={time.id}>
+                                <SelectItem key={time.$id} value={time.$id}>
                                   {time.name}
                                 </SelectItem>
                               ))}
@@ -340,7 +354,7 @@ export default function MantraManagementPage() {
                   <TabsContent value="translations" className="mt-6">
                     {editingMantra && (
                       <LanguageManager
-                        mantraId={editingMantra.id}
+                        mantraId={editingMantra.$id}
                         onTranslationsChange={(translations) => {
                           // Handle translations change if needed
                           console.log('Translations updated:', translations)
@@ -372,7 +386,7 @@ export default function MantraManagementPage() {
                 </TableHeader>
                 <TableBody>
                   {mantras.map((mantra) => (
-                    <TableRow key={mantra.id}>
+                    <TableRow key={mantra.$id}>
                       <TableCell className="font-medium">
                         <div>
                           <div className="font-semibold">{mantra.title}</div>
@@ -398,7 +412,7 @@ export default function MantraManagementPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {new Date(mantra.created_at).toLocaleDateString()}
+                        {new Date(mantra.$createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
@@ -412,7 +426,7 @@ export default function MantraManagementPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => handleDelete(mantra.id)}
+                            onClick={() => handleDelete(mantra.$id)}
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />

@@ -10,8 +10,8 @@ export function DemoNotice() {
   const [isDismissed, setIsDismissed] = useState(false)
 
   useEffect(() => {
-    // Check if Supabase is configured
-    const checkSupabaseConfig = async () => {
+    // Check if Appwrite is configured
+    const checkAppwriteConfig = async () => {
       try {
         const response = await fetch('/api/deities')
         if (!response.ok) {
@@ -25,7 +25,7 @@ export function DemoNotice() {
     // Check if user has dismissed the notice
     const dismissed = localStorage.getItem('dhivyuga-demo-notice-dismissed')
     if (!dismissed) {
-      checkSupabaseConfig()
+      checkAppwriteConfig()
     }
   }, [])
 
@@ -47,7 +47,7 @@ export function DemoNotice() {
           <div className="flex-1">
             <h4 className="font-semibold text-sm mb-1">Demo Mode</h4>
             <p className="text-xs text-muted-foreground mb-3">
-              Supabase is not configured. You're seeing demo data. 
+              Appwrite is not configured. You're seeing demo data.
               Follow the setup guide to connect your database.
             </p>
             <div className="flex gap-2">

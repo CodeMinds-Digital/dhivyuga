@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhivyuga — Brand Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+Devanagari:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Brand Colors — Saffron & Sacred */
+    --brand-50: #FFF8F0;
+    --brand-100: #FFEDD5;
+    --brand-200: #FED7AA;
+    --brand-300: #FDBA74;
+    --brand-400: #FB923C;
+    --brand-500: #F97316;
+    --brand-600: #EA580C;
+    --brand-700: #C2410C;
+    --brand-800: #9A3412;
+    --brand-900: #7C2D12;
+
+    /* Neutral — Warm Slate */
+    --neutral-0: #FFFFFF;
+    --neutral-50: #FAFAF9;
+    --neutral-100: #F5F5F4;
+    --neutral-200: #E7E5E4;
+    --neutral-300: #D6D3D1;
+    --neutral-400: #A8A29E;
+    --neutral-500: #78716C;
+    --neutral-600: #57534E;
+    --neutral-700: #44403C;
+    --neutral-800: #292524;
+    --neutral-900: #1C1917;
+
+    /* Semantic */
+    --success: #16A34A;
+    --warning: #EAB308;
+    --info: #2563EB;
+    --sacred-gold: #B8860B;
+    --sacred-gold-light: #FEF9C3;
+
+    /* Typography Scale (modular — 1.250 ratio) */
+    --text-xs: 0.64rem;    /* 10.24px */
+    --text-sm: 0.8rem;     /* 12.8px */
+    --text-base: 1rem;     /* 16px */
+    --text-md: 1.125rem;   /* 18px */
+    --text-lg: 1.25rem;    /* 20px */
+    --text-xl: 1.563rem;   /* 25px */
+    --text-2xl: 1.953rem;  /* 31.25px */
+    --text-3xl: 2.441rem;  /* 39px */
+    --text-4xl: 3.052rem;  /* 48.8px */
+
+    /* Spacing (8px grid) */
+    --space-1: 0.25rem;  /* 4px */
+    --space-2: 0.5rem;   /* 8px */
+    --space-3: 0.75rem;  /* 12px */
+    --space-4: 1rem;     /* 16px */
+    --space-5: 1.5rem;   /* 24px */
+    --space-6: 2rem;     /* 32px */
+    --space-7: 2.5rem;   /* 40px */
+    --space-8: 3rem;     /* 48px */
+    --space-10: 4rem;    /* 64px */
+    --space-12: 5rem;    /* 80px */
+    --space-16: 8rem;    /* 128px */
+
+    /* Radii */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+    --shadow-search: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+    --shadow-search-focus: 0 4px 16px rgba(249,115,22,0.12), 0 0 0 2px rgba(249,115,22,0.2);
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 400ms;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--neutral-800);
+    background: var(--neutral-0);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    font-size: 16px;
+  }
+
+  /* Section Headers */
+  .section-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brand-600);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--brand-100);
+    display: inline-block;
+  }
+
+  .demo-section {
+    padding: var(--space-8) var(--space-6);
+    border-bottom: 1px solid var(--neutral-100);
+  }
+
+  /* ===================== */
+  /*   1. HOMEPAGE HERO    */
+  /* ===================== */
+  .hero {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, var(--neutral-0) 0%, var(--brand-50) 100%);
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-8);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249,115,22,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-brand {
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+
+  .hero-logo {
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    color: var(--neutral-900);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    font-family: 'Noto Serif Devanagari', 'Inter', serif;
+  }
+
+  .hero-logo-sub {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--neutral-500);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: var(--space-2);
+  }
+
+  /* Search Bar */
+  .search-container {
+    width: 100%;
+    max-width: 640px;
+    position: relative;
+  }
+
+  .search-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: var(--neutral-0);
+    border: 1.5px solid var(--neutral-200);
+    border-radius: var(--radius-full);
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
+    box-shadow: var(--shadow-search);
+    transition: all var(--duration-normal) var(--ease-out);
+    gap: var(--space-3);
+  }
+
+  .search-bar:hover {
+    border-color: var(--neutral-300);
+    box-shadow: var(--shadow-md);
+  }
+
+  .search-bar:focus-within {
+    border-color: var(--brand-400);
+    box-shadow: var(--shadow-search-focus);
+  }
+
+  .search-icon {
+    color: var(--neutral-400);
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: var(--text-base);
+    font-family: inherit;
+    color: var(--neutral-800);
+    background: transparent;
+    min-width: 0;
+  }
+
+  .search-input::placeholder {
+    color: var(--neutral-400);
+  }
+
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--neutral-600);
+    cursor: pointer;
+    background: var(--neutral-50);
+    transition: all var(--duration-fast) var(--ease-out);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .lang-switch:hover {
+    background: var(--neutral-100);
+    border-color: var(--neutral-300);
+  }
+
+  /* Category Chips */
+  .chips-container {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .chip {
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border: 1px solid var(--neutral-200);
+    color: var(--neutral-600);
+    background: var(--neutral-0);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-out);
+    white-space: nowrap;
+  }
+
+  .chip:hover {
+    border-color: var(--brand-300);
+    color: var(--brand-700);
+    background: var(--brand-50);
+  }
+
+  .chip.active {
+    border-color: var(--brand-500);
+    color: var(--brand-700);
+    background: var(--brand-100);
+  }
+
+  /* ===================== */
+  /*  2. SEARCH RESULTS    */
+  /* ===================== */
+  .results-page {
+    background: var(--neutral-50);
+    min-height: 100vh;
+  }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-6);
+    background: var(--neutral-0);
+    border-bottom: 1px solid var(--neutral-100);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .results-logo {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--neutral-900);
+    font-family: 'Noto Serif Devanagari', serif;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .results-search {
+    flex: 1;
+    max-width: 580px;
+    display: flex;
+    align-items: center;
+    background: var(--neutral-0);
+    border: 1.5px solid var(--neutral-200);
+    border-radius: var(--radius-full);
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+    gap: var(--space-2);
+    transition: border-color var(--duration-fast);
+  }
+
+  .results-search:focus-within {
+    border-color: var(--brand-400);
+  }
+
+  .results-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: var(--text-sm);
+    font-family: inherit;
+    color: var(--neutral-800);
+    background: transparent;
+  }
+
+  .results-filters {
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--neutral-0);
+    border-bottom: 1px solid var(--neutral-100);
+    overflow-x: auto;
+  }
+
+  .filter-chip {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    border: 1px solid var(--neutral-200);
+    color: var(--neutral-600);
+    background: var(--neutral-0);
+    cursor: pointer;
+    transition: all var(--duration-fast);
+    white-space: nowrap;
+  }
+
+  .filter-chip:hover, .filter-chip.active {
+    border-color: var(--brand-400);
+    color: var(--brand-700);
+    background: var(--brand-50);
+  }
+
+  .results-meta {
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+  }
+
+  .results-list {
+    padding: 0 var(--space-6);
+    max-width: 800px;
+  }
+
+  .result-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+    border-bottom: 1px solid var(--neutral-100);
+    cursor: pointer;
+    transition: background var(--duration-fast);
+  }
+
+  .result-item:hover {
+    background: var(--neutral-0);
+    margin: 0 calc(-1 * var(--space-4));
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .result-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .result-title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--neutral-900);
+    line-height: 1.4;
+    margin-bottom: var(--space-1);
+  }
+
+  .result-snippet {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .result-tags {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .result-tag {
+    font-size: var(--text-xs);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+  }
+
+  .result-tag.deity { background: var(--brand-50); color: var(--brand-700); }
+  .result-tag.category { background: #EFF6FF; color: #1D4ED8; }
+  .result-tag.time { background: var(--neutral-100); color: var(--neutral-600); }
+
+  .result-meta {
+    flex-shrink: 0;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    align-items: flex-end;
+  }
+
+  .result-views {
+    font-size: var(--text-xs);
+    color: var(--neutral-400);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  /* ===================== */
+  /*  3. FULL-SCREEN MODAL */
+  /* ===================== */
+  .modal-overlay {
+    background: var(--neutral-0);
+    min-height: 100vh;
+  }
+
+  .modal-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-5);
+    border-bottom: 1px solid var(--neutral-100);
+    position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    z-index: 10;
+  }
+
+  .modal-back {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--neutral-600);
+    cursor: pointer;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    transition: all var(--duration-fast);
+  }
+
+  .modal-back:hover { background: var(--neutral-100); color: var(--neutral-800); }
+
+  .modal-actions {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .modal-action-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--duration-fast);
+    color: var(--neutral-600);
+    font-size: var(--text-md);
+  }
+
+  .modal-action-btn:hover { background: var(--neutral-100); }
+
+  .modal-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6) var(--space-16);
+  }
+
+  .mantra-hero {
+    text-align: center;
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--neutral-100);
+    margin-bottom: var(--space-6);
+  }
+
+  .mantra-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--neutral-900);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: var(--space-3);
+  }
+
+  .mantra-subtitle-tags {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .mantra-subtitle-tag {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+  }
+
+  /* Language Tabs */
+  .lang-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--neutral-200);
+    margin-bottom: var(--space-6);
+    overflow-x: auto;
+  }
+
+  .lang-tab {
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--neutral-500);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all var(--duration-fast);
+    white-space: nowrap;
+  }
+
+  .lang-tab:hover { color: var(--neutral-700); }
+
+  .lang-tab.active {
+    color: var(--brand-700);
+    border-bottom-color: var(--brand-500);
+    font-weight: 600;
+  }
+
+  /* Mantra Text Block */
+  .mantra-text-block {
+    background: linear-gradient(135deg, var(--sacred-gold-light) 0%, #FFF7ED 100%);
+    border: 1px solid #FDE68A;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6) var(--space-5);
+    text-align: center;
+    margin-bottom: var(--space-6);
+    position: relative;
+  }
+
+  .mantra-text-block::before,
+  .mantra-text-block::after {
+    content: '॥';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--text-xl);
+    color: var(--sacred-gold);
+    opacity: 0.4;
+  }
+
+  .mantra-text-block::before { left: var(--space-4); }
+  .mantra-text-block::after { right: var(--space-4); }
+
+  .mantra-sacred-text {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--neutral-900);
+    line-height: 1.6;
+    font-family: 'Noto Sans Tamil', 'Noto Serif Devanagari', 'Inter', sans-serif;
+  }
+
+  .mantra-transliteration {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    margin-top: var(--space-3);
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+
+  /* Details Grid */
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+
+  .detail-card {
+    background: var(--neutral-50);
+    border: 1px solid var(--neutral-100);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+  }
+
+  .detail-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--neutral-400);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-1);
+  }
+
+  .detail-value {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--neutral-800);
+  }
+
+  /* Content Sections */
+  .content-section {
+    margin-bottom: var(--space-6);
+  }
+
+  .content-heading {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--neutral-900);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--neutral-100);
+  }
+
+  .benefits-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    line-height: 1.5;
+    padding: var(--space-2) 0;
+  }
+
+  .benefit-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand-400);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  .meaning-text {
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    line-height: 1.7;
+  }
+
+  /* ===================== */
+  /*  PAGE SEPARATOR       */
+  /* ===================== */
+  .page-separator {
+    background: var(--neutral-900);
+    color: var(--neutral-0);
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- SCREEN 1: HOMEPAGE — SEARCH-FIRST            -->
+<!-- ============================================ -->
+<div class="page-separator">Screen 1 — Homepage</div>
+
+<div class="hero">
+  <div class="hero-brand">
+    <div class="hero-logo">திவ்யுகா</div>
+    <div class="hero-logo-sub">Dhivyuga &middot; Sacred Mantra Search</div>
+  </div>
+
+  <div class="search-container">
+    <div class="search-bar">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input class="search-input" type="text" placeholder="Search mantras, deities, categories...">
+      <div class="lang-switch">
+        EN
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="chips-container">
+    <div class="chip">Wealth</div>
+    <div class="chip">Protection</div>
+    <div class="chip active">Health</div>
+    <div class="chip">Wisdom</div>
+    <div class="chip">Peace</div>
+    <div class="chip">Obstacle Removal</div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- SCREEN 2: SEARCH RESULTS                     -->
+<!-- ============================================ -->
+<div class="page-separator">Screen 2 — Search Results</div>
+
+<div class="results-page">
+  <div class="results-header">
+    <div class="results-logo">திவ்யுகா</div>
+    <div class="results-search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" value="ganesha" style="flex:1;border:none;outline:none;font-family:inherit;font-size:14px;color:#292524;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" stroke-width="2" cursor="pointer"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </div>
+    <div class="lang-switch" style="margin-left: auto;">
+      EN
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+  </div>
+
+  <div class="results-filters">
+    <div class="filter-chip active">All</div>
+    <div class="filter-chip">Obstacle Removal</div>
+    <div class="filter-chip">Wisdom</div>
+    <div class="filter-chip">Wealth</div>
+    <div class="filter-chip">Morning</div>
+    <div class="filter-chip">Evening</div>
+  </div>
+
+  <div class="results-meta">3 results for "ganesha" &middot; 0.12s</div>
+
+  <div class="results-list">
+    <div class="result-item">
+      <div class="result-content">
+        <div class="result-title">Om Gam Ganapataye Namaha</div>
+        <div class="result-snippet">Salutations to Lord Ganesha, the remover of obstacles and patron of arts and sciences. This powerful mantra invokes blessings for success in new endeavors.</div>
+        <div class="result-tags">
+          <span class="result-tag deity">Ganesha</span>
+          <span class="result-tag category">Obstacle Removal</span>
+          <span class="result-tag time">Morning &middot; 108&times;</span>
+        </div>
+      </div>
+      <div class="result-meta">
+        <span class="result-views">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          150
+        </span>
+      </div>
+    </div>
+
+    <div class="result-item">
+      <div class="result-content">
+        <div class="result-title">Vakratunda Mahakaya</div>
+        <div class="result-snippet">Prayer to the one with curved trunk and great body, whose brilliance is equal to a billion suns. Grants obstacle-free path in all undertakings.</div>
+        <div class="result-tags">
+          <span class="result-tag deity">Ganesha</span>
+          <span class="result-tag category">Wisdom</span>
+          <span class="result-tag time">Any time &middot; 11&times;</span>
+        </div>
+      </div>
+      <div class="result-meta">
+        <span class="result-views">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          89
+        </span>
+      </div>
+    </div>
+
+    <div class="result-item">
+      <div class="result-content">
+        <div class="result-title">Ganesha Ashtottara Shatanamavali</div>
+        <div class="result-snippet">The 108 sacred names of Lord Ganesha for daily worship. Chanting these names brings complete blessings and divine protection.</div>
+        <div class="result-tags">
+          <span class="result-tag deity">Ganesha</span>
+          <span class="result-tag category">Spiritual Growth</span>
+          <span class="result-tag time">Brahma Muhurta &middot; 108&times;</span>
+        </div>
+      </div>
+      <div class="result-meta">
+        <span class="result-views">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          67
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- SCREEN 3: FULL-SCREEN MANTRA OVERLAY         -->
+<!-- ============================================ -->
+<div class="page-separator">Screen 3 — Mantra Detail (Full-Screen Overlay)</div>
+
+<div class="modal-overlay">
+  <div class="modal-topbar">
+    <div class="modal-back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+      Back to results
+    </div>
+    <div class="modal-actions">
+      <div class="modal-action-btn" title="Listen">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      </div>
+      <div class="modal-action-btn" title="Copy">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+      </div>
+      <div class="modal-action-btn" title="Share">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
+      </div>
+      <div class="modal-action-btn" title="Close" style="margin-left: var(--space-2);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-body">
+    <div class="mantra-hero">
+      <h1 class="mantra-title">Om Gam Ganapataye Namaha</h1>
+      <div class="mantra-subtitle-tags">
+        <span class="mantra-subtitle-tag" style="background: var(--brand-50); color: var(--brand-700);">Ganesha</span>
+        <span class="mantra-subtitle-tag" style="background: #EFF6FF; color: #1D4ED8;">Obstacle Removal</span>
+        <span class="mantra-subtitle-tag" style="background: var(--neutral-100); color: var(--neutral-600);">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          150 views
+        </span>
+      </div>
+    </div>
+
+    <!-- Language Tabs -->
+    <div class="lang-tabs">
+      <div class="lang-tab active">தமிழ் (Tamil)</div>
+      <div class="lang-tab">English</div>
+      <div class="lang-tab">हिन्दी (Hindi)</div>
+      <div class="lang-tab">संस्कृतम् (Sanskrit)</div>
+    </div>
+
+    <!-- Sacred Mantra Text -->
+    <div class="mantra-text-block">
+      <div class="mantra-sacred-text">ஓம் கம் கணபதயே நமஹா</div>
+      <div class="mantra-transliteration">Om Gam Ga-na-pa-ta-ye Na-ma-ha</div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="details-grid">
+      <div class="detail-card">
+        <div class="detail-label">Deity</div>
+        <div class="detail-value">Ganesha</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Best Time</div>
+        <div class="detail-value">Morning (6:00 – 9:00)</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Recitation Count</div>
+        <div class="detail-value">108 times (Full Mala)</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Auspicious Period</div>
+        <div class="detail-value" style="color: var(--success);">Guru Hora ✓</div>
+      </div>
+    </div>
+
+    <!-- Meaning -->
+    <div class="content-section">
+      <div class="content-heading">Meaning & Significance</div>
+      <p class="meaning-text">
+        Salutations to Lord Ganesha, the remover of obstacles and patron of arts and sciences. This powerful mantra invokes the blessings of Ganesha for success in new endeavors and removal of barriers in life. "Gam" is the sacred seed syllable (bija mantra) of Ganesha.
+      </p>
+    </div>
+
+    <!-- Benefits -->
+    <div class="content-section">
+      <div class="content-heading">Benefits</div>
+      <ul class="benefits-list">
+        <li class="benefit-item"><div class="benefit-bullet"></div>Removes obstacles in life and clears the path forward</li>
+        <li class="benefit-item"><div class="benefit-bullet"></div>Brings success in new ventures and undertakings</li>
+        <li class="benefit-item"><div class="benefit-bullet"></div>Enhances wisdom, intelligence, and clarity of thought</li>
+        <li class="benefit-item"><div class="benefit-bullet"></div>Provides divine protection and good fortune in business</li>
+        <li class="benefit-item"><div class="benefit-bullet"></div>Improves concentration and focus during meditation</li>
+      </ul>
+    </div>
+
+    <!-- Usage Instructions -->
+    <div class="content-section">
+      <div class="content-heading">How to Chant</div>
+      <p class="meaning-text">
+        Chant 108 times in the morning before starting any new work or important task. Face east while chanting. Use a rudraksha mala for counting. Maintain a clean and peaceful environment. Best practiced during Brahma Muhurta (3:30 – 5:30 AM) for maximum spiritual benefit.
+      </p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<h2>Homepage Layout Direction</h2>
+<p class="subtitle">Minimal search-first design with admin-configurable sections below</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 24px; background: #fafafa;">
+      <!-- Wireframe mockup A -->
+      <div style="text-align:center; padding: 60px 20px 30px;">
+        <div style="font-size: 32px; margin-bottom: 8px;">🙏</div>
+        <div style="font-size: 24px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px;">திவ்யுகா</div>
+        <div style="font-size: 11px; color: #888; margin-bottom: 24px;">Dhivyuga - Sacred Mantra Search</div>
+        <div style="display:flex; align-items:center; border: 2px solid #e5e7eb; border-radius: 24px; padding: 12px 16px; background: white; max-width: 480px; margin: 0 auto;">
+          <span style="color: #9ca3af; font-size: 14px;">🔍</span>
+          <span style="color: #9ca3af; margin-left: 8px; font-size: 14px;">Search mantras, deities, categories...</span>
+          <span style="margin-left: auto; font-size: 12px; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 8px;">EN ▾</span>
+        </div>
+        <div style="margin-top: 16px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+          <span style="font-size: 11px; padding: 4px 12px; border-radius: 16px; background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa;">Wealth</span>
+          <span style="font-size: 11px; padding: 4px 12px; border-radius: 16px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;">Protection</span>
+          <span style="font-size: 11px; padding: 4px 12px; border-radius: 16px; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;">Health</span>
+          <span style="font-size: 11px; padding: 4px 12px; border-radius: 16px; background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff;">Wisdom</span>
+        </div>
+        <div style="margin-top: 8px; font-size: 10px; color: #aaa; font-style: italic;">↑ Admin-togglable category chips</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Centered Vertical</h3>
+      <p>Logo + search bar centered on page. Category chips below. Clean, Google-like. Language switcher inside search bar.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 24px; background: #fafafa;">
+      <!-- Wireframe mockup B -->
+      <div style="padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #eee;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 18px;">🙏</span>
+            <span style="font-size: 14px; font-weight: 700; color: #1a1a2e;">திவ்யுகா</span>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <span style="font-size: 11px; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px 8px;">EN ▾</span>
+            <span style="font-size: 11px; color: #6b7280;">Admin</span>
+          </div>
+        </div>
+        <div style="text-align:center; padding: 50px 20px 30px;">
+          <div style="font-size: 16px; color: #374151; margin-bottom: 20px;">Discover Sacred Mantras</div>
+          <div style="display:flex; align-items:center; border: 2px solid #e5e7eb; border-radius: 24px; padding: 12px 16px; background: white; max-width: 440px; margin: 0 auto;">
+            <span style="color: #9ca3af; font-size: 14px;">🔍</span>
+            <span style="color: #9ca3af; margin-left: 8px; font-size: 14px;">Search mantras...</span>
+          </div>
+          <div style="margin-top: 16px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+            <span style="font-size: 11px; padding: 4px 12px; border-radius: 16px; background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa;">Wealth</span>
+            <span style="font-size: 11px; padding: 4px 12px; border-radius: 16px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;">Protection</span>
+            <span style="font-size: 11px; padding: 4px 12px; border-radius: 16px; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;">Health</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Header + Centered Search</h3>
+      <p>Persistent header with logo/lang/admin. Search centered in hero area. Language switcher in header instead of search bar.</p>
+    </div>
+  </div>
+</div>

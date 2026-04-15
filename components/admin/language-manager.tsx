@@ -8,10 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus, Edit, Trash2, Globe, Check, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import WysiwygEditor from './wysiwyg-editor'
-import { supabase } from '@/lib/supabase'
+import { databases, DATABASE_ID, COLLECTIONS, Query, ID } from '@/lib/appwrite'
 
 interface Language {
-  id: string
+  $id: string
   code: string
   name: string
   native_name: string
@@ -21,7 +21,7 @@ interface Language {
 }
 
 interface Translation {
-  id?: string
+  $id?: string
   language_id: string
   text: string
   transliteration: string
@@ -51,13 +51,11 @@ export default function LanguageManager({
     if (languages.length > 0 && !activeLanguage) {
       // Default to Tamil if available, otherwise first language
       const defaultLang = languages.find(l => l.code === 'ta') || languages[0]
-      setActiveLanguage(defaultLang?.id || '')
+      setActiveLanguage(defaultLang?.$id || '')
     }
   }, [languages, activeLanguage])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-
-  // supabase is already imported
 
   useEffect(() => {
     fetchLanguages()
@@ -68,35 +66,30 @@ export default function LanguageManager({
       // Set first active language as default
       const firstActive = languages.find(l => l.is_active)
       if (firstActive) {
-        setActiveLanguage(firstActive.id)
+        setActiveLanguage(firstActive.$id)
       }
     }
   }, [languages, activeLanguage])
 
   const fetchLanguages = async () => {
     try {
-      const { data, error } = await supabase
-        .from('languages')
-        .select('*')
-        .eq('is_active', true)
-        .order('sort_order')
+      const languagesRes = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.LANGUAGES,
+        [Query.equal('is_active', true), Query.orderAsc('sort_order'), Query.limit(100)]
+      )
 
-      if (error) {
-        throw error
-      }
-      setLanguages(data || [])
+      setLanguages(languagesRes.documents as any)
 
       // Fetch existing translations for this mantra
       if (mantraId) {
-        const { data: translationsData, error: translationsError } = await supabase
-          .from('mantra_translations')
-          .select('*')
-          .eq('mantra_id', mantraId)
+        const translationsRes = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTIONS.MANTRA_TRANSLATIONS,
+          [Query.equal('mantra_id', mantraId), Query.limit(100)]
+        )
 
-        if (translationsError) {
-          throw translationsError
-        }
-        setTranslations(translationsData || [])
+        setTranslations(translationsRes.documents as any)
       }
     } catch (error) {
       console.error('Error fetching languages:', error)
@@ -147,11 +140,12 @@ export default function LanguageManager({
 
       if (!translation.text.trim()) {
         // Delete translation if text is empty
-        if (translation.id) {
-          await supabase
-            .from('mantra_translations')
-            .delete()
-            .eq('id', translation.id)
+        if (translation.$id) {
+          await databases.deleteDocument(
+            DATABASE_ID,
+            COLLECTIONS.MANTRA_TRANSLATIONS,
+            translation.$id
+          )
         }
         return
       }
@@ -167,31 +161,26 @@ export default function LanguageManager({
         usage_notes: translation.usage_notes
       }
 
-      if (translation.id) {
+      if (translation.$id) {
         // Update existing
-        const { error } = await supabase
-          .from('mantra_translations')
-          .update(translationData)
-          .eq('id', translation.id)
-
-        if (error) {
-          throw error
-        }
+        await databases.updateDocument(
+          DATABASE_ID,
+          COLLECTIONS.MANTRA_TRANSLATIONS,
+          translation.$id,
+          translationData
+        )
       } else {
         // Create new
-        const { data, error } = await supabase
-          .from('mantra_translations')
-          .insert(translationData)
-          .select()
-          .single()
-
-        if (error) {
-          throw error
-        }
+        const newDoc = await databases.createDocument(
+          DATABASE_ID,
+          COLLECTIONS.MANTRA_TRANSLATIONS,
+          ID.unique(),
+          translationData
+        )
 
         // Update local state with new ID
         setTranslations(prev => prev.map(t =>
-          t.language_id === languageId ? { ...t, id: data.id } : t
+          t.language_id === languageId ? { ...t, $id: newDoc.$id } : t
         ))
       }
     } catch (error) {
@@ -257,13 +246,13 @@ export default function LanguageManager({
           <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 gap-1 bg-gray-100 p-1 rounded-lg">
             {languages.slice(0, 6).map((language) => {
               const hasTranslation = translations.some(t =>
-                t.language_id === language.id && t.text && t.text.trim()
+                t.language_id === language.$id && t.text && t.text.trim()
               )
 
               return (
                 <TabsTrigger
-                  key={language.id}
-                  value={language.id}
+                  key={language.$id}
+                  value={language.$id}
                   className="relative text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-700"
                 >
                   <span className="flex items-center gap-1">
@@ -279,7 +268,7 @@ export default function LanguageManager({
 
           <AnimatePresence mode="wait">
             {languages.map((language) => (
-              <TabsContent key={language.id} value={language.id}>
+              <TabsContent key={language.$id} value={language.$id}>
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -289,12 +278,12 @@ export default function LanguageManager({
                 >
                   <TranslationForm
                     language={language}
-                    translation={getTranslationForLanguage(language.id)}
-                    onUpdate={(field, value) => updateTranslation(language.id, field, value)}
-                    onSave={() => saveTranslation(language.id)}
-                    onAddBenefit={() => addBenefit(language.id)}
-                    onUpdateBenefit={(index, value) => updateBenefit(language.id, index, value)}
-                    onRemoveBenefit={(index) => removeBenefit(language.id, index)}
+                    translation={getTranslationForLanguage(language.$id)}
+                    onUpdate={(field, value) => updateTranslation(language.$id, field, value)}
+                    onSave={() => saveTranslation(language.$id)}
+                    onAddBenefit={() => addBenefit(language.$id)}
+                    onUpdateBenefit={(index, value) => updateBenefit(language.$id, index, value)}
+                    onRemoveBenefit={(index) => removeBenefit(language.$id, index)}
                     saving={saving}
                   />
                 </motion.div>

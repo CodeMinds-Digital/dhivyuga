@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { databases, DATABASE_ID, COLLECTIONS, Query, ID } from '@/lib/appwrite'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -15,11 +15,11 @@ import { AdminLayout } from '@/components/admin/admin-layout'
 import Link from 'next/link'
 
 interface Deity {
-  id: string
+  $id: string
   name: string
   description: string | null
   is_active: boolean
-  created_at: string
+  $createdAt: string
   mantra_count?: number
 }
 
@@ -47,20 +47,32 @@ export default function DeityManagementPage() {
   const fetchDeities = async () => {
     setLoading(true)
     try {
-      // Fetch deities with mantra count (admin sees all deities)
-      const { data: deitiesData } = await supabase
-        .from('deities')
-        .select(`
-          *,
-          mantras(count)
-        `)
-        .order('name')
+      // Fetch deities
+      const deitiesRes = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.DEITIES,
+        [Query.orderAsc('name'), Query.limit(100)]
+      )
 
-      // Transform data to include mantra count
-      const deitiesWithCount = deitiesData?.map(deity => ({
+      // Fetch all mantras to count by deity_id
+      const mantrasRes = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.MANTRAS,
+        [Query.limit(5000)]
+      )
+
+      // Count mantras per deity
+      const mantraCountByDeity: Record<string, number> = {}
+      mantrasRes.documents.forEach((mantra: any) => {
+        if (mantra.deity_id) {
+          mantraCountByDeity[mantra.deity_id] = (mantraCountByDeity[mantra.deity_id] || 0) + 1
+        }
+      })
+
+      const deitiesWithCount = deitiesRes.documents.map((deity: any) => ({
         ...deity,
-        mantra_count: deity.mantras?.length || 0
-      })) || []
+        mantra_count: mantraCountByDeity[deity.$id] || 0
+      }))
 
       setDeities(deitiesWithCount)
     } catch (error) {
@@ -72,16 +84,16 @@ export default function DeityManagementPage() {
 
   const toggleDeityStatus = async (deity: Deity) => {
     try {
-      const { error } = await supabase
-        .from('deities')
-        .update({ is_active: !deity.is_active })
-        .eq('id', deity.id)
-
-      if (error) throw error
+      await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTIONS.DEITIES,
+        deity.$id,
+        { is_active: !deity.is_active }
+      )
 
       // Update local state
       setDeities(prev => prev.map(d =>
-        d.id === deity.id ? { ...d, is_active: !d.is_active } : d
+        d.$id === deity.$id ? { ...d, is_active: !d.is_active } : d
       ))
     } catch (error) {
       console.error('Error toggling deity status:', error)
@@ -95,19 +107,20 @@ export default function DeityManagementPage() {
     try {
       if (editingDeity) {
         // Update existing deity
-        const { error } = await supabase
-          .from('deities')
-          .update(formData)
-          .eq('id', editingDeity.id)
-
-        if (error) throw error
+        await databases.updateDocument(
+          DATABASE_ID,
+          COLLECTIONS.DEITIES,
+          editingDeity.$id,
+          formData
+        )
       } else {
         // Create new deity
-        const { error } = await supabase
-          .from('deities')
-          .insert([formData])
-
-        if (error) throw error
+        await databases.createDocument(
+          DATABASE_ID,
+          COLLECTIONS.DEITIES,
+          ID.unique(),
+          formData
+        )
       }
 
       setIsDialogOpen(false)
@@ -134,12 +147,7 @@ export default function DeityManagementPage() {
     if (!confirm('Are you sure you want to delete this deity? This will affect all associated mantras.')) return
 
     try {
-      const { error } = await supabase
-        .from('deities')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
+      await databases.deleteDocument(DATABASE_ID, COLLECTIONS.DEITIES, id)
       fetchDeities()
     } catch (error) {
       console.error('Error deleting deity:', error)
@@ -249,7 +257,7 @@ export default function DeityManagementPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {deities.map((deity) => (
                     <motion.div
-                      key={deity.id}
+                      key={deity.$id}
                       whileHover={{ y: -4 }}
                       transition={{ duration: 0.2 }}
                       className="admin-category-card p-6 relative group"
@@ -310,7 +318,7 @@ export default function DeityManagementPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => handleDelete(deity.id)}
+                            onClick={() => handleDelete(deity.$id)}
                             className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -328,7 +336,7 @@ export default function DeityManagementPage() {
                       {/* Footer */}
                       <div className="flex justify-between items-center pt-3 border-t border-slate-100">
                         <span className="text-xs text-zinc-600 font-medium">
-                          Created {new Date(deity.created_at).toLocaleDateString('en-US', {
+                          Created {new Date(deity.$createdAt).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric'
@@ -391,7 +399,7 @@ export default function DeityManagementPage() {
                     .sort((a, b) => (b.mantra_count || 0) - (a.mantra_count || 0))
                     .slice(0, 5)
                     .map((deity) => (
-                      <div key={deity.id} className="flex justify-between items-center">
+                      <div key={deity.$id} className="flex justify-between items-center">
                         <span className="text-sm">{deity.name}</span>
                         <Badge variant="outline">{deity.mantra_count}</Badge>
                       </div>

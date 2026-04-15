@@ -1,23 +1,33 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-
 interface DetailsGridProps {
+  deityLabel?: string
   deity?: string
+  bestTimeLabel?: string
   bestTime?: string
+  recitationCountLabel?: string
   recitationCount?: string
+  auspiciousPeriodLabel?: string
   auspiciousPeriod?: string
   isAuspicious?: boolean
 }
 
-export function DetailsGrid({ deity, bestTime, recitationCount, auspiciousPeriod, isAuspicious }: DetailsGridProps) {
-  const t = useTranslations('mantra')
-
+export function DetailsGrid({
+  deityLabel = 'Deity',
+  deity,
+  bestTimeLabel = 'Best Time',
+  bestTime,
+  recitationCountLabel = 'Recitation Count',
+  recitationCount,
+  auspiciousPeriodLabel = 'Auspicious Period',
+  auspiciousPeriod,
+  isAuspicious,
+}: DetailsGridProps) {
   const items = [
-    { label: t('deity'), value: deity },
-    { label: t('bestTime'), value: bestTime },
-    { label: t('recitationCount'), value: recitationCount },
-    { label: t('auspiciousPeriod'), value: auspiciousPeriod, isGreen: isAuspicious },
+    { label: deityLabel, value: deity },
+    { label: bestTimeLabel, value: bestTime },
+    { label: recitationCountLabel, value: recitationCount },
+    { label: auspiciousPeriodLabel, value: auspiciousPeriod, isGreen: isAuspicious },
   ].filter(item => item.value)
 
   return (

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { databases, DATABASE_ID, COLLECTIONS, Query, ID } from '@/lib/appwrite'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -17,11 +17,11 @@ import { AuthGuard } from '@/components/admin/auth-guard'
 import Link from 'next/link'
 
 interface Category {
-  id: string
+  $id: string
   name: string
   description: string | null
   is_active: boolean
-  created_at: string
+  $createdAt: string
   mantra_count?: number
 }
 
@@ -49,20 +49,32 @@ export default function CategoryManagementPage() {
   const fetchCategories = async () => {
     setLoading(true)
     try {
-      // Fetch categories with mantra count
-      const { data: categoriesData } = await supabase
-        .from('categories')
-        .select(`
-          *,
-          mantras(count)
-        `)
-        .order('name')
+      // Fetch categories
+      const categoriesRes = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.CATEGORIES,
+        [Query.orderAsc('name'), Query.limit(100)]
+      )
 
-      // Transform data to include mantra count
-      const categoriesWithCount = categoriesData?.map(category => ({
+      // Fetch all mantras to count by category_id
+      const mantrasRes = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.MANTRAS,
+        [Query.limit(5000)]
+      )
+
+      // Count mantras per category
+      const mantraCountByCategory: Record<string, number> = {}
+      mantrasRes.documents.forEach((mantra: any) => {
+        if (mantra.category_id) {
+          mantraCountByCategory[mantra.category_id] = (mantraCountByCategory[mantra.category_id] || 0) + 1
+        }
+      })
+
+      const categoriesWithCount = categoriesRes.documents.map((category: any) => ({
         ...category,
-        mantra_count: category.mantras?.length || 0
-      })) || []
+        mantra_count: mantraCountByCategory[category.$id] || 0
+      }))
 
       setCategories(categoriesWithCount)
     } catch (error) {
@@ -78,19 +90,20 @@ export default function CategoryManagementPage() {
     try {
       if (editingCategory) {
         // Update existing category
-        const { error } = await supabase
-          .from('categories')
-          .update(formData)
-          .eq('id', editingCategory.id)
-
-        if (error) throw error
+        await databases.updateDocument(
+          DATABASE_ID,
+          COLLECTIONS.CATEGORIES,
+          editingCategory.$id,
+          formData
+        )
       } else {
         // Create new category
-        const { error } = await supabase
-          .from('categories')
-          .insert([formData])
-
-        if (error) throw error
+        await databases.createDocument(
+          DATABASE_ID,
+          COLLECTIONS.CATEGORIES,
+          ID.unique(),
+          formData
+        )
       }
 
       setIsDialogOpen(false)
@@ -117,12 +130,7 @@ export default function CategoryManagementPage() {
     if (!confirm('Are you sure you want to delete this category? This will affect all associated mantras.')) return
 
     try {
-      const { error } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
+      await databases.deleteDocument(DATABASE_ID, COLLECTIONS.CATEGORIES, id)
       fetchCategories()
     } catch (error) {
       console.error('Error deleting category:', error)
@@ -216,7 +224,7 @@ export default function CategoryManagementPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {categories.map((category) => (
                     <motion.div
-                      key={category.id}
+                      key={category.$id}
                       whileHover={{ y: -4 }}
                       transition={{ duration: 0.2 }}
                       className="admin-category-card p-6 relative group"
@@ -253,7 +261,7 @@ export default function CategoryManagementPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => handleDelete(category.id)}
+                            onClick={() => handleDelete(category.$id)}
                             className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -271,7 +279,7 @@ export default function CategoryManagementPage() {
                       {/* Footer */}
                       <div className="flex justify-between items-center pt-3 border-t border-slate-100">
                         <span className="text-xs text-zinc-600 font-medium">
-                          Created {new Date(category.created_at).toLocaleDateString('en-US', {
+                          Created {new Date(category.$createdAt).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric'
@@ -334,7 +342,7 @@ export default function CategoryManagementPage() {
                     .sort((a, b) => (b.mantra_count || 0) - (a.mantra_count || 0))
                     .slice(0, 5)
                     .map((category) => (
-                      <div key={category.id} className="flex justify-between items-center">
+                      <div key={category.$id} className="flex justify-between items-center">
                         <span className="text-sm">{category.name}</span>
                         <Badge variant="outline">{category.mantra_count}</Badge>
                       </div>

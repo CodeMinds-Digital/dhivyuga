@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { LoadingGrid } from '@/components/ui/loading-spinner'
 import { ErrorMessage } from '@/components/ui/error-boundary'
 import { motion } from 'framer-motion'
-import { supabase } from '@/lib/supabase'
+import { databases, DATABASE_ID, COLLECTIONS, Query } from '@/lib/appwrite'
 
 interface Graha {
   id: string
@@ -39,41 +39,44 @@ export default function GrahasPage() {
     setLoading(true)
     setError(null)
     try {
-      // First get grahas with mantra counts
-      const { data: grahasData, error: grahasError } = await supabase
-        .from('deities')
-        .select(`
-          id,
-          name,
-          sanskrit_name,
-          description,
-          day_of_week,
-          color,
-          gemstone,
-          metal,
-          element,
-          direction,
-          created_at
-        `)
-        .ilike('name', '%graha%')
-        .or('name.ilike.%sun%,name.ilike.%moon%,name.ilike.%mars%,name.ilike.%mercury%,name.ilike.%jupiter%,name.ilike.%venus%,name.ilike.%saturn%,name.ilike.%rahu%,name.ilike.%ketu%')
+      // Fetch all deities and filter for grahas client-side
+      const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.DEITIES, [
+        Query.limit(100),
+      ])
 
-      if (grahasError) throw grahasError
+      const grahaKeywords = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'rahu', 'ketu', 'surya', 'chandra', 'mangal', 'budh', 'guru', 'shukra', 'shani']
+      const grahasData = result.documents.filter(d => {
+        const lowerName = d.name.toLowerCase()
+        return grahaKeywords.some(k => lowerName.includes(k)) || lowerName.includes('graha')
+      })
 
       // Get mantra counts for each graha
-      const grahasWithCounts = await Promise.all(
-        (grahasData || []).map(async (graha) => {
-          const { count } = await supabase
-            .from('mantras')
-            .select('id', { count: 'exact' })
-            .contains('deities', [graha.id])
+      const mantrasResult = await databases.listDocuments(DATABASE_ID, COLLECTIONS.MANTRAS, [
+        Query.limit(5000),
+        Query.select(['deity_id']),
+      ]).catch(() => ({ documents: [] }))
 
-          return {
-            ...graha,
-            mantra_count: count || 0
-          }
-        })
-      )
+      const mantraCountByDeity: Record<string, number> = {}
+      for (const m of mantrasResult.documents) {
+        if (m.deity_id) {
+          mantraCountByDeity[m.deity_id] = (mantraCountByDeity[m.deity_id] || 0) + 1
+        }
+      }
+
+      const grahasWithCounts: Graha[] = grahasData.map(d => ({
+        id: d.$id,
+        name: d.name,
+        sanskrit_name: d.sanskrit_name || '',
+        description: d.description || '',
+        day_of_week: d.day_of_week || '',
+        color: d.color || '',
+        gemstone: d.gemstone || '',
+        metal: d.metal || '',
+        element: d.element || '',
+        direction: d.direction || '',
+        mantra_count: mantraCountByDeity[d.$id] || 0,
+        created_at: d.$createdAt,
+      }))
 
       setGrahas(grahasWithCounts)
     } catch (error) {

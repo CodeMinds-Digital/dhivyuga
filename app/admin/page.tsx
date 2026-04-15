@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { databases, DATABASE_ID, COLLECTIONS, Query } from '@/lib/appwrite'
 import { AdminLayout } from '@/components/admin/admin-layout'
 import { AuthGuard } from '@/components/admin/auth-guard'
 import { DashboardCards } from '@/components/admin/dashboard-cards'
@@ -29,18 +29,18 @@ export default function AdminPage() {
   const fetchStats = async () => {
     try {
       const [mantrasRes, categoriesRes, deitiesRes] = await Promise.all([
-        supabase.from('mantras').select('id, view_count'),
-        supabase.from('categories').select('id'),
-        supabase.from('deities').select('id')
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.MANTRAS, [Query.limit(5000)]),
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.CATEGORIES, [Query.limit(5000)]),
+        databases.listDocuments(DATABASE_ID, COLLECTIONS.DEITIES, [Query.limit(5000)])
       ])
 
-      const totalViews = mantrasRes.data?.reduce((sum, mantra) => sum + (mantra.view_count || 0), 0) || 0
+      const totalViews = mantrasRes.documents.reduce((sum, mantra) => sum + (mantra.view_count || 0), 0)
 
       setStats({
-        totalMantras: mantrasRes.data?.length || 0,
+        totalMantras: mantrasRes.total,
         totalViews,
-        totalCategories: categoriesRes.data?.length || 0,
-        totalDeities: deitiesRes.data?.length || 0
+        totalCategories: categoriesRes.total,
+        totalDeities: deitiesRes.total
       })
     } catch (error) {
       console.error('Error fetching stats:', error)
