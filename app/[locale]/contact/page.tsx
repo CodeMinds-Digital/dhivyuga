@@ -116,7 +116,10 @@ export default function ContactPage() {
                           Thank You!
                         </h3>
                         <p className="text-slate-600">
-                          Your message has been sent. We'll get back to you soon with spiritual guidance and support.
+                          Thank you for reaching out. We'll get back to you soon with spiritual guidance and support.
+                        </p>
+                        <p className="text-xs text-neutral-400 mt-2">
+                          Note: This form is not yet connected to a backend. Your message was not sent.
                         </p>
                         <Button
                           onClick={() => setSubmitted(false)}
