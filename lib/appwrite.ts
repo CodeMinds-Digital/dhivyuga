@@ -34,7 +34,10 @@ export async function getRelatedDoc(collectionId: string, docId: string | null |
   if (!docId) return null
   try {
     return await databases.getDocument(DATABASE_ID, collectionId, docId)
-  } catch {
+  } catch (e: any) {
+    if (e?.code !== 404) {
+      console.error(`getRelatedDoc error [${collectionId}/${docId}]:`, e?.message || e)
+    }
     return null
   }
 }

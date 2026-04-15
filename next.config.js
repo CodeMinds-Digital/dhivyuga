@@ -4,7 +4,7 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    unoptimized: process.env.NODE_ENV === 'production', // Disable optimization for static export
+    unoptimized: false,
     remotePatterns: [
       {
         protocol: 'https',
@@ -17,8 +17,6 @@ const nextConfig = {
     ],
   },
 
-  // Static asset handling for Netlify
-  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
   trailingSlash: true,
 
   // Fix CSS loading issues in development
