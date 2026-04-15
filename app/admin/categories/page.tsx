@@ -285,8 +285,8 @@ export default function CategoryManagementPage() {
                           })}
                         </span>
                         <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                          <span className="text-xs text-zinc-600 font-medium">Active</span>
+                          <div className={`w-2 h-2 rounded-full ${category.is_active ? 'bg-green-400' : 'bg-gray-400'}`}></div>
+                          <span className="text-xs text-zinc-600 font-medium">{category.is_active ? 'Active' : 'Inactive'}</span>
                         </div>
                       </div>
                     </motion.div>

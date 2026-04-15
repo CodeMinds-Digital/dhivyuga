@@ -4,8 +4,8 @@ import { serverDatabases as databases, DATABASE_ID, COLLECTIONS, Query } from '@
 export async function GET() {
   try {
     const [categoriesResult, deitiesResult, timesResult, kalamsResult] = await Promise.all([
-      databases.listDocuments(DATABASE_ID, COLLECTIONS.CATEGORIES, [Query.orderAsc('name'), Query.limit(100)]),
-      databases.listDocuments(DATABASE_ID, COLLECTIONS.DEITIES, [Query.orderAsc('name'), Query.limit(100)]),
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.CATEGORIES, [Query.equal('is_active', true), Query.orderAsc('name'), Query.limit(100)]),
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.DEITIES, [Query.equal('is_active', true), Query.orderAsc('name'), Query.limit(100)]),
       databases.listDocuments(DATABASE_ID, COLLECTIONS.RECITATION_TIMES, [Query.orderAsc('name'), Query.limit(100)]),
       databases.listDocuments(DATABASE_ID, COLLECTIONS.KALAMS, [Query.orderAsc('name'), Query.limit(100)]),
     ])
