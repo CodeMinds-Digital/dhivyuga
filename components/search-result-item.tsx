@@ -47,9 +47,9 @@ export function SearchResultItem({
           )}
         </div>
       </div>
-      <div className="flex-shrink-0 flex items-center gap-1 text-xs text-neutral-400">
-        <Eye className="w-3.5 h-3.5" />
-        {viewCount}
+      <div className="flex-shrink-0 flex items-center gap-1 text-xs text-neutral-400" role="status" aria-label={`${viewCount} views`}>
+        <Eye className="w-3.5 h-3.5" aria-hidden="true" />
+        <span>{viewCount}</span>
       </div>
     </button>
   )

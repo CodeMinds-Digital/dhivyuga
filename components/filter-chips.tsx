@@ -12,9 +12,10 @@ export function FilterChips({ categories, activeFilter, onFilterChange }: Filter
   const t = useTranslations('search')
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide" role="group" aria-label="Filter categories">
       <button
         onClick={() => onFilterChange('')}
+        aria-pressed={activeFilter === ''}
         className={`px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap transition-all duration-150 ${
           activeFilter === ''
             ? 'border-brand-400 text-brand-700 bg-brand-50'
@@ -27,6 +28,7 @@ export function FilterChips({ categories, activeFilter, onFilterChange }: Filter
         <button
           key={cat.id}
           onClick={() => onFilterChange(cat.id)}
+          aria-pressed={activeFilter === cat.id}
           className={`px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap transition-all duration-150 ${
             activeFilter === cat.id
               ? 'border-brand-400 text-brand-700 bg-brand-50'
