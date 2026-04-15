@@ -128,6 +128,8 @@ export async function GET(
     return NextResponse.json({
       mantra: mantraResponse,
       related_mantras: relatedMantras,
+    }, {
+      headers: { 'Cache-Control': 'no-store, max-age=0' }
     })
   } catch (error: any) {
     console.error('Mantra fetch error:', error)

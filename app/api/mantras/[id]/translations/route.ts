@@ -46,7 +46,9 @@ export async function GET(
       return aOrder - bOrder
     })
 
-    return NextResponse.json({ translations })
+    return NextResponse.json({ translations }, {
+      headers: { 'Cache-Control': 'no-store, max-age=0' }
+    })
   } catch (error) {
     console.error('Translations fetch error:', error)
     return NextResponse.json({ error: 'Failed to fetch translations' }, { status: 500 })
