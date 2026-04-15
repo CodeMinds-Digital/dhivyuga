@@ -1,59 +1,51 @@
 'use client'
 
-import { useLocale, useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import { useRouter, usePathname } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { ChevronDown } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Globe } from 'lucide-react'
 
-const languages = [
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்' },
-  { code: 'hi', name: 'Hindi', nativeName: 'हिंदी' },
-  { code: 'te', name: 'Telugu', nativeName: 'తెలుగు' },
-  { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ' },
-  { code: 'sa', name: 'Sanskrit', nativeName: 'संस्कृतम्' },
+const locales = [
+  { code: 'ta', label: 'TA', name: 'தமிழ்' },
+  { code: 'en', label: 'EN', name: 'English' },
+  { code: 'hi', label: 'HI', name: 'हिंदी' },
 ]
 
 export function LanguageSwitcher() {
   const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
-  const t = useTranslations('language')
 
-  const currentLanguage = languages.find(lang => lang.code === locale)
+  const current = locales.find(l => l.code === locale) || locales[0]
 
-  const handleLanguageChange = (newLocale: string) => {
-    // Remove the current locale from the pathname
-    const pathWithoutLocale = pathname.replace(`/${locale}`, '')
-    // Navigate to the new locale
-    router.push(`/${newLocale}${pathWithoutLocale}`)
+  const handleChange = (newLocale: string) => {
+    const segments = pathname.split('/')
+    segments[1] = newLocale
+    router.push(segments.join('/'))
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2 text-white hover:bg-white/10">
-          <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{currentLanguage?.nativeName}</span>
-        </Button>
+        <button className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-neutral-600 bg-neutral-50 border border-neutral-200 rounded-full hover:bg-neutral-100 hover:border-neutral-300 transition-all duration-150 cursor-pointer whitespace-nowrap">
+          {current.label}
+          <ChevronDown className="h-3 w-3" />
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        {languages.map((language) => (
+      <DropdownMenuContent align="end" className="w-36">
+        {locales.map((l) => (
           <DropdownMenuItem
-            key={language.code}
-            onClick={() => handleLanguageChange(language.code)}
-            className={`cursor-pointer ${locale === language.code ? 'bg-zinc-100 text-zinc-900' : ''}`}
+            key={l.code}
+            onClick={() => handleChange(l.code)}
+            className={`cursor-pointer ${locale === l.code ? 'bg-brand-50 text-brand-700 font-semibold' : ''}`}
           >
-            <div className="flex flex-col">
-              <span className="font-medium">{language.nativeName}</span>
-              <span className="text-xs text-muted-foreground">{language.name}</span>
-            </div>
+            <span className="font-medium mr-2">{l.label}</span>
+            <span className="text-xs text-neutral-500">{l.name}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
