@@ -86,6 +86,8 @@ export function SearchBar({ defaultValue = '' }: { defaultValue?: string }) {
     }
   }
 
+  const suggestionsVisible = showSuggestions && suggestions.length > 0
+
   return (
     <div ref={containerRef} className="w-full max-w-[640px] relative" role="search">
       <div className="flex items-center gap-3 bg-white border-[1.5px] border-neutral-200 rounded-full px-5 py-3 shadow-[var(--shadow-search)] transition-all duration-200 hover:border-neutral-300 hover:shadow-md focus-within:border-brand-400 focus-within:shadow-[var(--shadow-search-focus)]">
@@ -101,23 +103,35 @@ export function SearchBar({ defaultValue = '' }: { defaultValue?: string }) {
           className="flex-1 bg-transparent border-none outline-none text-base text-neutral-800 placeholder:text-neutral-400 min-w-0 font-sans"
           aria-label={t('searchPlaceholder')}
           autoComplete="off"
+          role="combobox"
+          aria-expanded={suggestionsVisible}
+          aria-controls="search-suggestions"
+          aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
+          aria-autocomplete="list"
         />
       </div>
 
-      {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 overflow-hidden z-50">
+      {suggestionsVisible && (
+        <div
+          id="search-suggestions"
+          role="listbox"
+          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-100 overflow-hidden z-50"
+        >
           {suggestions.map((s, i) => (
-            <button
+            <div
               key={`${s.type}-${s.text}`}
+              role="option"
+              aria-selected={i === selectedIndex}
+              id={`suggestion-${i}`}
               onClick={() => handleSubmit(s.text)}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer ${
                 i === selectedIndex ? 'bg-neutral-50' : 'hover:bg-neutral-50'
               }`}
             >
               <span className="text-sm">{typeIcons[s.type]}</span>
               <span className="text-sm text-neutral-800 flex-1">{s.text}</span>
               <span className="text-[10px] font-medium text-neutral-400 uppercase">{s.type}</span>
-            </button>
+            </div>
           ))}
         </div>
       )}
