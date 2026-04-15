@@ -1,18 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { serverDatabases as databases, DATABASE_ID, COLLECTIONS, Query, ID, validateAdminSecret } from '@/lib/appwrite-server'
 
 export async function GET() {
   try {
-    const { data: languages, error } = await supabase
-      .from('languages')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order')
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.LANGUAGES, [
+      Query.equal('is_active', true),
+      Query.orderAsc('sort_order'),
+      Query.limit(100),
+    ])
 
-    if (error) {
-      console.error('Languages fetch error:', error)
-      return NextResponse.json({ error: 'Failed to fetch languages' }, { status: 500 })
-    }
+    const languages = result.documents.map(d => ({
+      id: d.$id,
+      code: d.code,
+      name: d.name,
+      native_name: d.native_name,
+      direction: d.direction,
+      sort_order: d.sort_order,
+      is_active: d.is_active,
+      created_at: d.$createdAt,
+      updated_at: d.$updatedAt,
+    }))
 
     return NextResponse.json({ languages })
   } catch (error) {
@@ -30,25 +37,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Code and name are required' }, { status: 400 })
     }
 
-    const { data: language, error } = await supabase
-      .from('languages')
-      .insert({
-        code,
-        name,
-        native_name,
-        direction,
-        sort_order,
-        is_active: true
-      })
-      .select()
-      .single()
+    const doc = await databases.createDocument(DATABASE_ID, COLLECTIONS.LANGUAGES, ID.unique(), {
+      code, name, native_name: native_name || '', direction, sort_order, is_active: true,
+    })
 
-    if (error) {
-      console.error('Language creation error:', error)
-      return NextResponse.json({ error: 'Failed to create language' }, { status: 500 })
-    }
-
-    return NextResponse.json({ language }, { status: 201 })
+    return NextResponse.json({
+      language: { id: doc.$id, code: doc.code, name: doc.name, native_name: doc.native_name, direction: doc.direction, sort_order: doc.sort_order, is_active: doc.is_active, created_at: doc.$createdAt, updated_at: doc.$updatedAt }
+    }, { status: 201 })
   } catch (error) {
     console.error('Language creation error:', error)
     return NextResponse.json({ error: 'Failed to create language' }, { status: 500 })

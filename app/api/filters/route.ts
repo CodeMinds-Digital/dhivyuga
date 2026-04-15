@@ -1,46 +1,20 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { serverDatabases as databases, DATABASE_ID, COLLECTIONS, Query } from '@/lib/appwrite-server'
 
 export async function GET() {
   try {
-    // Get all filter options for dropdowns
     const [categoriesResult, deitiesResult, timesResult, kalamsResult] = await Promise.all([
-      supabase
-        .from('categories')
-        .select('id, name, description')
-        .order('name'),
-      
-      supabase
-        .from('deities')
-        .select('id, name, description')
-        .order('name'),
-      
-      supabase
-        .from('recitation_times')
-        .select('id, name, description')
-        .order('name'),
-      
-      supabase
-        .from('kalams')
-        .select('id, name, description, is_auspicious')
-        .order('name')
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.CATEGORIES, [Query.orderAsc('name'), Query.limit(100)]),
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.DEITIES, [Query.orderAsc('name'), Query.limit(100)]),
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.RECITATION_TIMES, [Query.orderAsc('name'), Query.limit(100)]),
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.KALAMS, [Query.orderAsc('name'), Query.limit(100)]),
     ])
 
-    if (categoriesResult.error || deitiesResult.error || timesResult.error || kalamsResult.error) {
-      console.error('Filters error:', {
-        categories: categoriesResult.error,
-        deities: deitiesResult.error,
-        times: timesResult.error,
-        kalams: kalamsResult.error
-      })
-      return NextResponse.json({ error: 'Failed to fetch filters' }, { status: 500 })
-    }
-
     return NextResponse.json({
-      categories: categoriesResult.data || [],
-      deities: deitiesResult.data || [],
-      recitation_times: timesResult.data || [],
-      kalams: kalamsResult.data || []
+      categories: categoriesResult.documents.map(d => ({ id: d.$id, name: d.name, description: d.description })),
+      deities: deitiesResult.documents.map(d => ({ id: d.$id, name: d.name, description: d.description })),
+      recitation_times: timesResult.documents.map(d => ({ id: d.$id, name: d.name, description: d.description })),
+      kalams: kalamsResult.documents.map(d => ({ id: d.$id, name: d.name, description: d.description, is_auspicious: d.is_auspicious })),
     })
   } catch (error) {
     console.error('Filters error:', error)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { databases, DATABASE_ID, COLLECTIONS, Query, getRelatedDoc } from '@/lib/appwrite'
+import { serverDatabases as databases, DATABASE_ID, COLLECTIONS, Query, getRelatedDoc } from '@/lib/appwrite-server'
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -57,10 +57,12 @@ export async function GET(request: NextRequest) {
     // Fetch related deities and categories for all mantras
     const uniqueDeityIds = Array.from(new Set(allDocs.map(d => d.deity_id).filter(Boolean)))
     const uniqueCategoryIds = Array.from(new Set(allDocs.map(d => d.category_id).filter(Boolean)))
+    const mantraIds = allDocs.slice(0, limit).map(d => d.$id)
 
-    const [deitiesMap, categoriesMap] = await Promise.all([
+    const [deitiesMap, categoriesMap, translationsMap] = await Promise.all([
       fetchDocMap(COLLECTIONS.DEITIES, uniqueDeityIds),
       fetchDocMap(COLLECTIONS.CATEGORIES, uniqueCategoryIds),
+      fetchTranslationsForMantras(mantraIds),
     ])
 
     const mantras = allDocs.slice(0, limit).map(d => ({
@@ -77,6 +79,7 @@ export async function GET(request: NextRequest) {
       created_at: d.$createdAt,
       deities: d.deity_id && deitiesMap[d.deity_id] ? { name: deitiesMap[d.deity_id].name } : null,
       categories: d.category_id && categoriesMap[d.category_id] ? { name: categoriesMap[d.category_id].name } : null,
+      translations: translationsMap[d.$id] || [],
     }))
 
     return NextResponse.json({
@@ -96,5 +99,42 @@ async function fetchDocMap(collectionId: string, ids: string[]): Promise<Record<
   ids.forEach((id, i) => {
     if (results[i]) map[id] = results[i]
   })
+  return map
+}
+
+async function fetchTranslationsForMantras(mantraIds: string[]): Promise<Record<string, any[]>> {
+  const map: Record<string, any[]> = {}
+  if (mantraIds.length === 0) return map
+
+  // Fetch all translations for these mantras
+  // Appwrite doesn't support IN queries, so fetch per mantra
+  const results = await Promise.all(
+    mantraIds.map(async (id) => {
+      try {
+        const res = await databases.listDocuments(DATABASE_ID, COLLECTIONS.MANTRA_TRANSLATIONS, [
+          Query.equal('mantra_id', id),
+          Query.limit(10),
+        ])
+        // Fetch language info for each translation
+        const withLang = await Promise.all(
+          res.documents.map(async (t) => {
+            const lang = await getRelatedDoc(COLLECTIONS.LANGUAGES, t.language_id)
+            return {
+              language_code: lang?.code || '',
+              text: t.text,
+              meaning: t.meaning,
+            }
+          })
+        )
+        return { id, translations: withLang }
+      } catch {
+        return { id, translations: [] }
+      }
+    })
+  )
+
+  for (const r of results) {
+    map[r.id] = r.translations
+  }
   return map
 }

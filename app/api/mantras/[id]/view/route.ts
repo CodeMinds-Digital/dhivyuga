@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { serverDatabases as databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite-server'
 
 export async function POST(
   request: NextRequest,
@@ -8,24 +8,12 @@ export async function POST(
   const { id: mantraId } = await params
 
   try {
-    // First get current view count
-    const { data: currentMantra } = await supabase
-      .from('mantras')
-      .select('view_count')
-      .eq('id', mantraId)
-      .single()
+    const currentMantra = await databases.getDocument(DATABASE_ID, COLLECTIONS.MANTRAS, mantraId)
+    const newViewCount = (currentMantra.view_count || 0) + 1
 
-    // Increment view count
-    const newViewCount = (currentMantra?.view_count || 0) + 1
-    const { error } = await supabase
-      .from('mantras')
-      .update({ view_count: newViewCount })
-      .eq('id', mantraId)
-
-    if (error) {
-      console.error('View tracking error:', error)
-      return NextResponse.json({ error: 'Failed to track view' }, { status: 500 })
-    }
+    await databases.updateDocument(DATABASE_ID, COLLECTIONS.MANTRAS, mantraId, {
+      view_count: newViewCount,
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {

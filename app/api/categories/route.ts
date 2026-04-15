@@ -1,18 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { serverDatabases as databases, DATABASE_ID, COLLECTIONS, Query, ID, validateAdminSecret } from '@/lib/appwrite-server'
 
 export async function GET() {
   try {
-    const { data: categories, error } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('is_active', true)  // Only return active categories
-      .order('name')
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTIONS.CATEGORIES, [
+      Query.equal('is_active', true),
+      Query.orderAsc('name'),
+      Query.limit(100),
+    ])
 
-    if (error) {
-      console.error('Categories fetch error:', error)
-      return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
-    }
+    // Deduplicate by name (handles duplicate seeds)
+    const seen = new Set<string>()
+    const categories = result.documents
+      .map(d => ({
+        id: d.$id,
+        name: d.name,
+        description: d.description,
+        is_active: d.is_active,
+        created_at: d.$createdAt,
+      }))
+      .filter(cat => {
+        if (seen.has(cat.name)) return false
+        seen.add(cat.name)
+        return true
+      })
 
     return NextResponse.json({ categories })
   } catch (error) {
@@ -30,21 +41,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
     }
 
-    const { data: category, error } = await supabase
-      .from('categories')
-      .insert({
-        name,
-        description
-      })
-      .select()
-      .single()
+    const doc = await databases.createDocument(DATABASE_ID, COLLECTIONS.CATEGORIES, ID.unique(), {
+      name,
+      description: description || '',
+      is_active: true,
+    })
 
-    if (error) {
-      console.error('Category creation error:', error)
-      return NextResponse.json({ error: 'Failed to create category' }, { status: 500 })
-    }
-
-    return NextResponse.json({ category }, { status: 201 })
+    return NextResponse.json({
+      category: { id: doc.$id, name: doc.name, description: doc.description, is_active: doc.is_active, created_at: doc.$createdAt }
+    }, { status: 201 })
   } catch (error) {
     console.error('Category creation error:', error)
     return NextResponse.json({ error: 'Failed to create category' }, { status: 500 })

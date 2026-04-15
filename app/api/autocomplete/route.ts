@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { serverDatabases as databases, DATABASE_ID, COLLECTIONS, Query } from '@/lib/appwrite-server'
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -11,34 +11,27 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Get autocomplete suggestions from mantras, deities, and categories
     const [mantrasResult, deitiesResult, categoriesResult] = await Promise.all([
-      // Mantra titles
-      supabase
-        .from('mantras')
-        .select('title')
-        .ilike('title', `${query}%`)
-        .limit(limit),
-      
-      // Deity names
-      supabase
-        .from('deities')
-        .select('name')
-        .ilike('name', `${query}%`)
-        .limit(limit),
-      
-      // Category names
-      supabase
-        .from('categories')
-        .select('name')
-        .ilike('name', `${query}%`)
-        .limit(limit)
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.MANTRAS, [
+        Query.search('title', query),
+        Query.limit(limit),
+      ]).catch(() => ({ documents: [] })),
+
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.DEITIES, [
+        Query.search('name', query),
+        Query.limit(limit),
+      ]).catch(() => ({ documents: [] })),
+
+      databases.listDocuments(DATABASE_ID, COLLECTIONS.CATEGORIES, [
+        Query.search('name', query),
+        Query.limit(limit),
+      ]).catch(() => ({ documents: [] })),
     ])
 
     const suggestions = [
-      ...(mantrasResult.data?.map(m => ({ text: m.title, type: 'mantra' })) || []),
-      ...(deitiesResult.data?.map(d => ({ text: d.name, type: 'deity' })) || []),
-      ...(categoriesResult.data?.map(c => ({ text: c.name, type: 'category' })) || [])
+      ...mantrasResult.documents.map((m: any) => ({ text: m.title, type: 'mantra' })),
+      ...deitiesResult.documents.map((d: any) => ({ text: d.name, type: 'deity' })),
+      ...categoriesResult.documents.map((c: any) => ({ text: c.name, type: 'category' })),
     ].slice(0, limit)
 
     return NextResponse.json({ suggestions })
