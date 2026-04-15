@@ -73,26 +73,35 @@ export async function GET(
       const relatedResults = await Promise.all(
         relatedQueries.map(q => databases.listDocuments(DATABASE_ID, COLLECTIONS.MANTRAS, q).catch(() => ({ documents: [] })))
       )
+
+      // Collect all unique related docs, dedupe
+      const allRelatedDocs: any[] = []
       const seenIds = new Set<string>()
       for (const r of relatedResults) {
         for (const doc of r.documents) {
           if (!seenIds.has(doc.$id)) {
             seenIds.add(doc.$id)
-            const [rDeity, rCategory] = await Promise.all([
-              getRelatedDoc(COLLECTIONS.DEITIES, doc.deity_id),
-              getRelatedDoc(COLLECTIONS.CATEGORIES, doc.category_id),
-            ])
-            relatedMantras.push({
-              id: doc.$id,
-              title: doc.title,
-              view_count: doc.view_count,
-              deities: rDeity ? { name: rDeity.name } : null,
-              categories: rCategory ? { name: rCategory.name } : null,
-            })
+            allRelatedDocs.push(doc)
           }
         }
       }
-      relatedMantras = relatedMantras.slice(0, 4)
+      const sliced = allRelatedDocs.slice(0, 4)
+
+      // Batch-fetch all deity and category IDs at once
+      const relDeityIds = [...new Set(sliced.map(d => d.deity_id).filter(Boolean))]
+      const relCatIds = [...new Set(sliced.map(d => d.category_id).filter(Boolean))]
+      const [relDeitiesMap, relCatsMap] = await Promise.all([
+        fetchDocMap(COLLECTIONS.DEITIES, relDeityIds),
+        fetchDocMap(COLLECTIONS.CATEGORIES, relCatIds),
+      ])
+
+      relatedMantras = sliced.map(doc => ({
+        id: doc.$id,
+        title: doc.title,
+        view_count: doc.view_count,
+        deities: doc.deity_id && relDeitiesMap[doc.deity_id] ? { name: relDeitiesMap[doc.deity_id].name } : null,
+        categories: doc.category_id && relCatsMap[doc.category_id] ? { name: relCatsMap[doc.category_id].name } : null,
+      }))
     }
 
     const mantraResponse = {
@@ -127,4 +136,14 @@ export async function GET(
     }
     return NextResponse.json({ error: 'Failed to fetch mantra' }, { status: 500 })
   }
+}
+
+async function fetchDocMap(collectionId: string, ids: string[]): Promise<Record<string, any>> {
+  if (ids.length === 0) return {}
+  const map: Record<string, any> = {}
+  const results = await Promise.all(ids.map(id => getRelatedDoc(collectionId, id)))
+  ids.forEach((id, i) => {
+    if (results[i]) map[id] = results[i]
+  })
+  return map
 }

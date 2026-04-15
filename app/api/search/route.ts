@@ -107,8 +107,14 @@ async function fetchTranslationsForMantras(mantraIds: string[]): Promise<Record<
   const map: Record<string, any[]> = {}
   if (mantraIds.length === 0) return map
 
-  // Fetch all translations for these mantras
-  // Appwrite doesn't support IN queries, so fetch per mantra
+  // Pre-fetch all languages once
+  const langsResult = await databases.listDocuments(DATABASE_ID, COLLECTIONS.LANGUAGES, [Query.limit(20)])
+  const langMap: Record<string, string> = {}
+  for (const lang of langsResult.documents) {
+    langMap[lang.$id] = lang.code
+  }
+
+  // Fetch translations for all mantras in parallel
   const results = await Promise.all(
     mantraIds.map(async (id) => {
       try {
@@ -116,18 +122,12 @@ async function fetchTranslationsForMantras(mantraIds: string[]): Promise<Record<
           Query.equal('mantra_id', id),
           Query.limit(10),
         ])
-        // Fetch language info for each translation
-        const withLang = await Promise.all(
-          res.documents.map(async (t) => {
-            const lang = await getRelatedDoc(COLLECTIONS.LANGUAGES, t.language_id)
-            return {
-              language_code: lang?.code || '',
-              text: t.text,
-              meaning: t.meaning,
-            }
-          })
-        )
-        return { id, translations: withLang }
+        const translations = res.documents.map(t => ({
+          language_code: langMap[t.language_id] || '',
+          text: t.text,
+          meaning: t.meaning,
+        }))
+        return { id, translations }
       } catch {
         return { id, translations: [] }
       }
