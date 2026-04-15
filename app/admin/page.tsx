@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { databases, DATABASE_ID, COLLECTIONS, Query } from '@/lib/appwrite'
 import { AdminLayout } from '@/components/admin/admin-layout'
-import { AuthGuard } from '@/components/admin/auth-guard'
 import { DashboardCards } from '@/components/admin/dashboard-cards'
 import { DataTable } from '@/components/admin/data-table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -79,10 +78,9 @@ export default function AdminPage() {
   ]
 
   return (
-    <AuthGuard>
-      <AdminLayout>
+    <AdminLayout>
 
-        <div className="space-y-8">
+      <div className="space-y-8">
           {/* Welcome Section */}
           <div className="flex items-center justify-between">
             <div>
@@ -168,7 +166,6 @@ export default function AdminPage() {
             </CardContent>
           </Card>
         </div>
-      </AdminLayout>
-    </AuthGuard>
+    </AdminLayout>
   )
 }

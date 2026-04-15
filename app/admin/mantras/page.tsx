@@ -13,7 +13,6 @@ import { Badge } from '@/components/ui/badge'
 import { Plus, Edit, Trash2, Eye, ArrowLeft, Globe } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { AdminLayout } from '@/components/admin/admin-layout'
-import { AuthGuard } from '@/components/admin/auth-guard'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Label } from '@/components/ui/label'
 import LanguageManager from '@/components/admin/language-manager'
@@ -194,20 +193,17 @@ export default function MantraManagementPage() {
 
   if (loading) {
     return (
-      <AuthGuard>
-        <AdminLayout>
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-          </div>
-        </AdminLayout>
-      </AuthGuard>
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+        </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <AuthGuard>
-      <AdminLayout>
-        <div className="space-y-6">
+    <AdminLayout>
+      <div className="space-y-6">
           {/* Header with Add Button */}
           <div className="flex items-center justify-between">
             <div>
@@ -446,7 +442,6 @@ export default function MantraManagementPage() {
             </CardContent>
           </Card>
         </div>
-      </AdminLayout>
-    </AuthGuard>
+    </AdminLayout>
   )
 }
