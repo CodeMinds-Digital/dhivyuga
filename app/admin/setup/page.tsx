@@ -7,11 +7,12 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { SacredSymbolsBar } from '@/components/sacred-symbols-bar'
-import { CheckCircle, AlertCircle, User, Lock } from 'lucide-react'
+import { CheckCircle, AlertCircle, User, Lock, Key } from 'lucide-react'
 
 export default function AdminSetup() {
-  const [email, setEmail] = useState('admin@dhivyuga.com')
-  const [password, setPassword] = useState('dhivyuga2025')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [adminSecret, setAdminSecret] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
@@ -22,11 +23,18 @@ export default function AdminSetup() {
     setError('')
     setSuccess(false)
 
+    if (!adminSecret) {
+      setError('Admin secret is required. Check your .env.local for ADMIN_API_SECRET.')
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await fetch('/api/create-admin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-admin-secret': adminSecret,
         },
         body: JSON.stringify({ email, password }),
       })
@@ -51,7 +59,7 @@ export default function AdminSetup() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-50">
       <SacredSymbolsBar />
-      
+
       <div className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
@@ -73,7 +81,7 @@ export default function AdminSetup() {
                     You can now sign in to the admin panel with your credentials.
                   </p>
                 </div>
-                <Button 
+                <Button
                   onClick={() => window.location.href = '/admin/login'}
                   className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
                 >
@@ -88,7 +96,24 @@ export default function AdminSetup() {
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
-                
+
+                <div className="space-y-2">
+                  <Label htmlFor="secret">Admin Secret</Label>
+                  <div className="relative">
+                    <Key className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="secret"
+                      type="password"
+                      placeholder="Enter ADMIN_API_SECRET from .env.local"
+                      value={adminSecret}
+                      onChange={(e) => setAdminSecret(e.target.value)}
+                      className="pl-10"
+                      required
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">Found in your .env.local file</p>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Admin Email</Label>
                   <div className="relative">
@@ -104,7 +129,7 @@ export default function AdminSetup() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="password">Admin Password</Label>
                   <div className="relative">
@@ -112,15 +137,16 @@ export default function AdminSetup() {
                     <Input
                       id="password"
                       type="password"
-                      placeholder="Enter admin password"
+                      placeholder="Create a strong password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10"
+                      minLength={8}
                       required
                     />
                   </div>
                 </div>
-                
+
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
@@ -130,14 +156,6 @@ export default function AdminSetup() {
                 </Button>
               </form>
             )}
-            
-            <div className="mt-6 text-center text-sm text-gray-600">
-              <p className="font-semibold">Default Credentials:</p>
-              <p className="font-mono text-xs bg-gray-100 p-2 rounded mt-1">
-                Email: admin@dhivyuga.com<br />
-                Password: dhivyuga2025
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>

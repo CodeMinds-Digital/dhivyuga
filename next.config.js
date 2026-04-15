@@ -19,6 +19,10 @@ const nextConfig = {
 
   trailingSlash: true,
 
+  turbopack: {
+    root: __dirname,
+  },
+
   reactStrictMode: true,
 }
 
