@@ -83,7 +83,7 @@ async function createBoolAttr(collectionId: string, key: string, required = fals
 
 async function createIndex(collectionId: string, key: string, type: string, attributes: string[], orders?: string[]) {
   try {
-    await databases.createIndex(DB_ID, collectionId, key, type as any, attributes, orders)
+    await databases.createIndex(DB_ID, collectionId, key, type as any, attributes, orders as any)
   } catch (e: any) {
     if (e?.code === 409) return
     throw e
