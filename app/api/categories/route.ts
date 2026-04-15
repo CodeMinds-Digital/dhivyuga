@@ -33,6 +33,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (!validateAdminSecret(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const body = await request.json()
     const { name, description } = body

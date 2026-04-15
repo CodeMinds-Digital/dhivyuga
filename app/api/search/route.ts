@@ -8,7 +8,8 @@ export async function GET(request: NextRequest) {
   const deity = searchParams.get('deity')
   const time = searchParams.get('time')
   const kalam = searchParams.get('kalam')
-  const limit = parseInt(searchParams.get('limit') || '20')
+  const rawLimit = parseInt(searchParams.get('limit') || '20', 10)
+  const limit = isNaN(rawLimit) || rawLimit < 1 ? 20 : Math.min(rawLimit, 50)
 
   try {
     const queries: string[] = []
