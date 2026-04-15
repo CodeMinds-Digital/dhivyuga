@@ -4,7 +4,6 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { Search } from 'lucide-react'
-import { LanguageSwitcher } from '@/components/language-switcher'
 
 interface Suggestion {
   text: string
@@ -17,8 +16,13 @@ const typeIcons: Record<string, string> = {
   category: '📿',
 }
 
-export function SearchBar({ defaultValue = '', showLangSwitcher = true }: { defaultValue?: string; showLangSwitcher?: boolean }) {
+export function SearchBar({ defaultValue = '' }: { defaultValue?: string }) {
   const [query, setQuery] = useState(defaultValue)
+
+  useEffect(() => {
+    setQuery(defaultValue)
+  }, [defaultValue])
+
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
@@ -98,7 +102,6 @@ export function SearchBar({ defaultValue = '', showLangSwitcher = true }: { defa
           aria-label={t('searchPlaceholder')}
           autoComplete="off"
         />
-        {showLangSwitcher && <LanguageSwitcher />}
       </div>
 
       {showSuggestions && suggestions.length > 0 && (

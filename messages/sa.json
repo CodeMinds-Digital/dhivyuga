@@ -1,0 +1,67 @@
+{
+  "home": {
+    "logoTitle": "दिव्ययुगम्",
+    "logoSubtitle": "पवित्र मन्त्र अन्वेषणम्",
+    "searchPlaceholder": "मन्त्राणि, देवताः, वर्गाः अन्विष्यन्तु..."
+  },
+  "search": {
+    "resultsFor": "परिणामाः",
+    "resultsCount": "\"{query}\" इति {count} परिणामाः",
+    "noResults": "मन्त्राणि न लब्धानि",
+    "noResultsHint": "अन्यं शब्दं अन्विष्यतु अथवा वर्गान् पश्यतु",
+    "views": "दर्शनानि",
+    "allFilter": "सर्वाणि",
+    "loading": "लोडयति...",
+    "times": "वाराः"
+  },
+  "mantra": {
+    "backToResults": "परिणामान् प्रति प्रत्यागच्छतु",
+    "deity": "देवता",
+    "bestTime": "उत्तमः कालः",
+    "recitationCount": "जपसङ्ख्या",
+    "auspiciousPeriod": "शुभकालः",
+    "meaning": "अर्थः तथा महत्त्वम्",
+    "benefits": "लाभाः",
+    "howToChant": "कथं जपेत्",
+    "listen": "शृणोतु",
+    "copy": "प्रतिलिपिः",
+    "share": "विभजतु",
+    "close": "पिदधातु"
+  },
+  "categories": {
+    "Wealth": "धनम्",
+    "Protection": "रक्षा",
+    "Health": "आरोग्यम्",
+    "Wisdom": "प्रज्ञा",
+    "Love": "प्रेम",
+    "Success": "सिद्धिः",
+    "Peace": "शान्तिः",
+    "Spiritual Growth": "आध्यात्मिकवृद्धिः",
+    "Obstacle Removal": "विघ्ननिवारणम्",
+    "Good Fortune": "सौभाग्यम्"
+  },
+  "deities": {
+    "Ganesha": "गणेशः",
+    "Lakshmi": "लक्ष्मीः",
+    "Saraswati": "सरस्वती",
+    "Hanuman": "हनूमान्",
+    "Shiva": "शिवः",
+    "Vishnu": "विष्णुः",
+    "Devi": "देवी",
+    "Krishna": "कृष्णः",
+    "Rama": "रामः",
+    "Kali": "काली"
+  },
+  "times": {
+    "Morning": "प्रातःकालः",
+    "Noon": "मध्याह्नः",
+    "Evening": "सायंकालः",
+    "Brahma Muhurta": "ब्रह्ममुहूर्तः"
+  },
+  "language": {
+    "en": "English",
+    "ta": "தமிழ்",
+    "hi": "हिंदी",
+    "sa": "संस्कृतम्"
+  }
+}

@@ -6,10 +6,13 @@
   },
   "search": {
     "resultsFor": "results for",
+    "resultsCount": "{count} results for \"{query}\"",
     "noResults": "No mantras found",
     "noResultsHint": "Try a different search term or browse categories",
     "views": "views",
-    "allFilter": "All"
+    "allFilter": "All",
+    "loading": "Loading...",
+    "times": "times"
   },
   "mantra": {
     "backToResults": "Back to results",
@@ -25,9 +28,40 @@
     "share": "Share",
     "close": "Close"
   },
+  "categories": {
+    "Wealth": "Wealth",
+    "Protection": "Protection",
+    "Health": "Health",
+    "Wisdom": "Wisdom",
+    "Love": "Love",
+    "Success": "Success",
+    "Peace": "Peace",
+    "Spiritual Growth": "Spiritual Growth",
+    "Obstacle Removal": "Obstacle Removal",
+    "Good Fortune": "Good Fortune"
+  },
+  "deities": {
+    "Ganesha": "Ganesha",
+    "Lakshmi": "Lakshmi",
+    "Saraswati": "Saraswati",
+    "Hanuman": "Hanuman",
+    "Shiva": "Shiva",
+    "Vishnu": "Vishnu",
+    "Devi": "Devi",
+    "Krishna": "Krishna",
+    "Rama": "Rama",
+    "Kali": "Kali"
+  },
+  "times": {
+    "Morning": "Morning",
+    "Noon": "Noon",
+    "Evening": "Evening",
+    "Brahma Muhurta": "Brahma Muhurta"
+  },
   "language": {
     "en": "English",
     "ta": "Tamil",
-    "hi": "Hindi"
+    "hi": "Hindi",
+    "sa": "Sanskrit"
   }
 }

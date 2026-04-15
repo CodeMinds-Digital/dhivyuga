@@ -6,10 +6,13 @@
   },
   "search": {
     "resultsFor": "परिणाम",
+    "resultsCount": "\"{query}\" के लिए {count} परिणाम",
     "noResults": "कोई मंत्र नहीं मिला",
     "noResultsHint": "कोई अन्य शब्द खोजें या श्रेणियाँ ब्राउज़ करें",
     "views": "दृश्य",
-    "allFilter": "सभी"
+    "allFilter": "सभी",
+    "loading": "लोड हो रहा है...",
+    "times": "बार"
   },
   "mantra": {
     "backToResults": "परिणामों पर वापस जाएँ",
@@ -25,9 +28,40 @@
     "share": "साझा करें",
     "close": "बंद करें"
   },
+  "categories": {
+    "Wealth": "धन",
+    "Protection": "सुरक्षा",
+    "Health": "स्वास्थ्य",
+    "Wisdom": "ज्ञान",
+    "Love": "प्रेम",
+    "Success": "सफलता",
+    "Peace": "शांति",
+    "Spiritual Growth": "आध्यात्मिक विकास",
+    "Obstacle Removal": "बाधा निवारण",
+    "Good Fortune": "सौभाग्य"
+  },
+  "deities": {
+    "Ganesha": "गणेश",
+    "Lakshmi": "लक्ष्मी",
+    "Saraswati": "सरस्वती",
+    "Hanuman": "हनुमान",
+    "Shiva": "शिव",
+    "Vishnu": "विष्णु",
+    "Devi": "देवी",
+    "Krishna": "कृष्ण",
+    "Rama": "राम",
+    "Kali": "काली"
+  },
+  "times": {
+    "Morning": "प्रातःकाल",
+    "Noon": "मध्याह्न",
+    "Evening": "सायंकाल",
+    "Brahma Muhurta": "ब्रह्म मुहूर्त"
+  },
   "language": {
     "en": "English",
     "ta": "தமிழ்",
-    "hi": "हिंदी"
+    "hi": "हिंदी",
+    "sa": "संस्कृतम्"
   }
 }

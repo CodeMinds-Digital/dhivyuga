@@ -6,10 +6,13 @@
   },
   "search": {
     "resultsFor": "முடிவுகள்",
+    "resultsCount": "\"{query}\" க்கான {count} முடிவுகள்",
     "noResults": "மந்திரங்கள் கிடைக்கவில்லை",
     "noResultsHint": "வேறு சொல்லைத் தேடுக அல்லது வகைகளை உலாவுக",
     "views": "பார்வைகள்",
-    "allFilter": "அனைத்தும்"
+    "allFilter": "அனைத்தும்",
+    "loading": "ஏற்றுகிறது...",
+    "times": "முறை"
   },
   "mantra": {
     "backToResults": "முடிவுகளுக்குத் திரும்பு",
@@ -25,9 +28,40 @@
     "share": "பகிர்",
     "close": "மூடு"
   },
+  "categories": {
+    "Wealth": "செல்வம்",
+    "Protection": "பாதுகாப்பு",
+    "Health": "ஆரோக்கியம்",
+    "Wisdom": "ஞானம்",
+    "Love": "அன்பு",
+    "Success": "வெற்றி",
+    "Peace": "அமைதி",
+    "Spiritual Growth": "ஆன்மீக வளர்ச்சி",
+    "Obstacle Removal": "தடை நீக்கம்",
+    "Good Fortune": "நல்ல அதிர்ஷ்டம்"
+  },
+  "deities": {
+    "Ganesha": "கணேஷா",
+    "Lakshmi": "லக்ஷ்மி",
+    "Saraswati": "சரஸ்வதி",
+    "Hanuman": "ஹனுமான்",
+    "Shiva": "சிவன்",
+    "Vishnu": "விஷ்ணு",
+    "Devi": "தேவி",
+    "Krishna": "கிருஷ்ணா",
+    "Rama": "ராமா",
+    "Kali": "காளி"
+  },
+  "times": {
+    "Morning": "காலை",
+    "Noon": "நண்பகல்",
+    "Evening": "மாலை",
+    "Brahma Muhurta": "பிரம்ம முகூர்த்தம்"
+  },
   "language": {
     "en": "English",
     "ta": "தமிழ்",
-    "hi": "हिंदी"
+    "hi": "हिंदी",
+    "sa": "சமஸ்கிருதம்"
   }
 }
