@@ -1,0 +1,33 @@
+{
+  "home": {
+    "logoTitle": "दिव्युगा",
+    "logoSubtitle": "पवित्र मंत्र खोज",
+    "searchPlaceholder": "मंत्र, देवता, श्रेणियाँ खोजें..."
+  },
+  "search": {
+    "resultsFor": "परिणाम",
+    "noResults": "कोई मंत्र नहीं मिला",
+    "noResultsHint": "कोई अन्य शब्द खोजें या श्रेणियाँ ब्राउज़ करें",
+    "views": "दृश्य",
+    "allFilter": "सभी"
+  },
+  "mantra": {
+    "backToResults": "परिणामों पर वापस जाएँ",
+    "deity": "देवता",
+    "bestTime": "सर्वोत्तम समय",
+    "recitationCount": "जप संख्या",
+    "auspiciousPeriod": "शुभ काल",
+    "meaning": "अर्थ और महत्व",
+    "benefits": "लाभ",
+    "howToChant": "जप कैसे करें",
+    "listen": "सुनें",
+    "copy": "कॉपी",
+    "share": "साझा करें",
+    "close": "बंद करें"
+  },
+  "language": {
+    "en": "English",
+    "ta": "தமிழ்",
+    "hi": "हिंदी"
+  }
+}

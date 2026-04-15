@@ -1,0 +1,33 @@
+{
+  "home": {
+    "logoTitle": "திவ்யுகா",
+    "logoSubtitle": "புனித மந்திர தேடல்",
+    "searchPlaceholder": "மந்திரங்கள், தெய்வங்கள், வகைகள் தேடுக..."
+  },
+  "search": {
+    "resultsFor": "முடிவுகள்",
+    "noResults": "மந்திரங்கள் கிடைக்கவில்லை",
+    "noResultsHint": "வேறு சொல்லைத் தேடுக அல்லது வகைகளை உலாவுக",
+    "views": "பார்வைகள்",
+    "allFilter": "அனைத்தும்"
+  },
+  "mantra": {
+    "backToResults": "முடிவுகளுக்குத் திரும்பு",
+    "deity": "தெய்வம்",
+    "bestTime": "சிறந்த நேரம்",
+    "recitationCount": "ஜெப எண்ணிக்கை",
+    "auspiciousPeriod": "சுப காலம்",
+    "meaning": "பொருள் & முக்கியத்துவம்",
+    "benefits": "பலன்கள்",
+    "howToChant": "எவ்வாறு ஜபிக்க வேண்டும்",
+    "listen": "கேளுங்கள்",
+    "copy": "நகலெடு",
+    "share": "பகிர்",
+    "close": "மூடு"
+  },
+  "language": {
+    "en": "English",
+    "ta": "தமிழ்",
+    "hi": "हिंदी"
+  }
+}

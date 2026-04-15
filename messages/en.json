@@ -1,0 +1,33 @@
+{
+  "home": {
+    "logoTitle": "Dhivyuga",
+    "logoSubtitle": "Sacred Mantra Search",
+    "searchPlaceholder": "Search mantras, deities, categories..."
+  },
+  "search": {
+    "resultsFor": "results for",
+    "noResults": "No mantras found",
+    "noResultsHint": "Try a different search term or browse categories",
+    "views": "views",
+    "allFilter": "All"
+  },
+  "mantra": {
+    "backToResults": "Back to results",
+    "deity": "Deity",
+    "bestTime": "Best Time",
+    "recitationCount": "Recitation Count",
+    "auspiciousPeriod": "Auspicious Period",
+    "meaning": "Meaning & Significance",
+    "benefits": "Benefits",
+    "howToChant": "How to Chant",
+    "listen": "Listen",
+    "copy": "Copy",
+    "share": "Share",
+    "close": "Close"
+  },
+  "language": {
+    "en": "English",
+    "ta": "Tamil",
+    "hi": "Hindi"
+  }
+}
